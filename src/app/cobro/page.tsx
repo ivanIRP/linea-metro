@@ -124,7 +124,7 @@ export default function CobroPage() {
                       <TableCell className="font-medium">{txn.monto}</TableCell>
                       <TableCell>{txn.estacion}</TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoColor(txn.estado) as any} size="sm">
+                        <Badge variant={getEstadoColor(txn.estado) as unknown } size="sm">
                           {txn.estado}
                         </Badge>
                       </TableCell>
@@ -180,7 +180,7 @@ export default function CobroPage() {
                         <p className="font-medium text-gray-900">{alerta.tipo}</p>
                         <p className="text-sm text-gray-600">{alerta.ubicacion}</p>
                       </div>
-                      <Badge variant={getNivelColor(alerta.nivel) as any} size="sm">
+                      <Badge variant={getNivelColor(alerta.nivel) as unknown } size="sm">
                         {alerta.nivel}
                       </Badge>
                     </div>
@@ -216,7 +216,7 @@ export default function CobroPage() {
                     <TableCell className="font-bold text-orange-600">{tarifa.precio}</TableCell>
                     <TableCell>{tarifa.descripcion}</TableCell>
                     <TableCell>
-                      <Badge variant={getEstadoColor(tarifa.estado) as any} size="sm">
+                      <Badge variant={getEstadoColor(tarifa.estado) as unknown } size="sm">
                         {tarifa.estado}
                       </Badge>
                     </TableCell>

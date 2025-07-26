@@ -161,12 +161,12 @@ export default function ComunicacionPage() {
                       <TableCell>{com.tipo}</TableCell>
                       <TableCell>{com.duracion}</TableCell>
                       <TableCell>
-                        <Badge variant={getPrioridadColor(com.prioridad) as any} size="sm">
+                        <Badge variant={getPrioridadColor(com.prioridad) as unknown } size="sm">
                           {com.prioridad}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoColor(com.estado) as any} size="sm">
+                        <Badge variant={getEstadoColor(com.estado) as unknown } size="sm">
                           {com.estado}
                         </Badge>
                       </TableCell>
@@ -193,7 +193,7 @@ export default function ComunicacionPage() {
                         <p className="text-sm text-gray-600">{canal.frecuencia}</p>
                         <p className="text-xs text-gray-500">{canal.usuarios} usuarios</p>
                       </div>
-                      <Badge variant={getEstadoColor(canal.estado) as any} size="sm">
+                      <Badge variant={getEstadoColor(canal.estado) as unknown } size="sm">
                         {canal.estado}
                       </Badge>
                     </div>
@@ -250,7 +250,7 @@ export default function ComunicacionPage() {
                     <TableCell>{mensaje.destinatario}</TableCell>
                     <TableCell>{mensaje.asunto}</TableCell>
                     <TableCell>
-                      <Badge variant={getEstadoColor(mensaje.estado) as any} size="sm">
+                      <Badge variant={getEstadoColor(mensaje.estado) as unknown } size="sm">
                         {mensaje.estado}
                       </Badge>
                     </TableCell>
@@ -282,7 +282,7 @@ export default function ComunicacionPage() {
                     <TableCell className="font-medium">{equipo.equipo}</TableCell>
                     <TableCell>{equipo.ubicacion}</TableCell>
                     <TableCell>
-                      <Badge variant={getEstadoColor(equipo.estado) as any} size="sm">
+                      <Badge variant={getEstadoColor(equipo.estado) as unknown} size="sm">
                         {equipo.estado}
                       </Badge>
                     </TableCell>

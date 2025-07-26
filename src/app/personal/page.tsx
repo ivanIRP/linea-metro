@@ -114,7 +114,7 @@ export default function PersonalPage() {
                       <TableCell>{employee.departamento}</TableCell>
                       <TableCell>{employee.antiguedad}</TableCell>
                       <TableCell>
-                        <Badge variant={getStatusColor(employee.estado) as any} size="sm">
+                        <Badge variant={getStatusColor(employee.estado) as unknown } size="sm">
                           {employee.estado}
                         </Badge>
                       </TableCell>

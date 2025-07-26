@@ -424,7 +424,7 @@ export default function SeguridadPage() {
                   <TableCell className="font-medium">{camara.id}</TableCell>
                   <TableCell>{camara.ubicacion}</TableCell>
                   <TableCell>
-                    <Badge variant={getEstadoColor(camara.estado) as any} size="sm">
+                    <Badge variant={getEstadoColor(camara.estado) as unknown } size="sm">
                       {camara.estado}
                     </Badge>
                   </TableCell>
@@ -499,7 +499,7 @@ export default function SeguridadPage() {
                   <TableCell className="font-medium">{punto.nombre}</TableCell>
                   <TableCell>{punto.ubicacion}</TableCell>
                   <TableCell>
-                    <Badge variant={getEstadoColor(punto.estado) as any} size="sm">
+                    <Badge variant={getEstadoColor(punto.estado) as unknown } size="sm">
                       {punto.estado}
                     </Badge>
                   </TableCell>
@@ -576,12 +576,12 @@ export default function SeguridadPage() {
                   <TableCell className="max-w-xs truncate">{incidente.descripcion}</TableCell>
                   <TableCell>{incidente.ubicacion}</TableCell>
                   <TableCell>
-                    <Badge variant={getPrioridadColor(incidente.prioridad) as any} size="sm">
+                    <Badge variant={getPrioridadColor(incidente.prioridad) as unknown } size="sm">
                       {incidente.prioridad}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getEstadoColor(incidente.estado) as any} size="sm">
+                    <Badge variant={getEstadoColor(incidente.estado) as unknown } size="sm">
                       {incidente.estado}
                     </Badge>
                   </TableCell>

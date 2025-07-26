@@ -158,7 +158,7 @@ export default function TrenesPage() {
                       <TableCell>{tren.modelo}</TableCell>
                       <TableCell>{tren.linea}</TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoColor(tren.estado) as any} size="sm">
+                        <Badge variant={getEstadoColor(tren.estado) as unknown } size="sm">
                           {tren.estado}
                         </Badge>
                       </TableCell>
@@ -227,7 +227,7 @@ export default function TrenesPage() {
                         <p className="font-medium text-gray-900">{mant.tren}</p>
                         <p className="text-sm text-gray-600">{mant.descripcion}</p>
                       </div>
-                      <Badge variant={getTipoMantenimientoColor(mant.tipo) as any} size="sm">
+                      <Badge variant={getTipoMantenimientoColor(mant.tipo) as unknown } size="sm">
                         {mant.tipo}
                       </Badge>
                     </div>
@@ -298,7 +298,7 @@ export default function TrenesPage() {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{mant.tren}</TableCell>
                     <TableCell>
-                      <Badge variant={getTipoMantenimientoColor(mant.tipo) as any} size="sm">
+                      <Badge variant={getTipoMantenimientoColor(mant.tipo) as unknown } size="sm">
                         {mant.tipo}
                       </Badge>
                     </TableCell>

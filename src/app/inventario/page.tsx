@@ -104,7 +104,7 @@ export default function InventarioPage() {
                   <TableCell>{item.cantidad.toLocaleString()}</TableCell>
                   <TableCell>{item.ubicacion}</TableCell>
                   <TableCell>
-                    <Badge variant={getStatusColor(item.estado) as any} size="sm">
+                    <Badge variant={getStatusColor(item.estado) as unknown } size="sm">
                       {item.estado}
                     </Badge>
                   </TableCell>

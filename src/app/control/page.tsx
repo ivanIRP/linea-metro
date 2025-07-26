@@ -163,7 +163,7 @@ export default function ControlPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoTrenColor(tren.estado) as any} size="sm">
+                        <Badge variant={getEstadoTrenColor(tren.estado) as unknown } size="sm">
                           {tren.estado}
                         </Badge>
                       </TableCell>
@@ -227,7 +227,7 @@ export default function ControlPage() {
                     <TableCell>{estacion.linea}</TableCell>
                     <TableCell>{estacion.pasajeros}</TableCell>
                     <TableCell>
-                      <Badge variant={getEstadoEstacionColor(estacion.estado) as any} size="sm">
+                      <Badge variant={getEstadoEstacionColor(estacion.estado) as unknown } size="sm">
                         {estacion.estado}
                       </Badge>
                     </TableCell>
@@ -253,7 +253,7 @@ export default function ControlPage() {
                       <p className="text-sm text-gray-600">{incidente.ubicacion}</p>
                       <p className="text-sm text-gray-500 mt-1">{incidente.descripcion}</p>
                     </div>
-                    <Badge variant={getPrioridadColor(incidente.prioridad) as any} size="sm">
+                    <Badge variant={getPrioridadColor(incidente.prioridad) as unknown } size="sm">
                       {incidente.prioridad}
                     </Badge>
                   </div>

@@ -167,7 +167,7 @@ export default function LineasPage() {
                       <TableCell>{line.longitud}</TableCell>
                       <TableCell>{line.estaciones}</TableCell>
                       <TableCell>
-                        <Badge variant={getStatusColor(line.estado) as any} size="sm">
+                        <Badge variant={getStatusColor(line.estado) as unknown } size="sm">
                           {line.estado}
                         </Badge>
                       </TableCell>

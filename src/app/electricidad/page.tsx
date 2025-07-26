@@ -186,7 +186,7 @@ export default function ElectricidadPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoColor(sub.estado) as any} size="sm">
+                        <Badge variant={getEstadoColor(sub.estado) as unknown } size="sm">
                           {sub.estado}
                         </Badge>
                       </TableCell>
@@ -215,7 +215,7 @@ export default function ElectricidadPage() {
                         <p className="font-medium text-gray-900">{alerta.tipo}</p>
                         <p className="text-sm text-gray-600">{alerta.ubicacion}</p>
                       </div>
-                      <Badge variant={getNivelColor(alerta.nivel) as any} size="sm">
+                      <Badge variant={getNivelColor(alerta.nivel) as unknown } size="sm">
                         {alerta.nivel}
                       </Badge>
                     </div>
@@ -308,7 +308,7 @@ export default function ElectricidadPage() {
                     <TableCell className="font-medium">{equipo.equipo}</TableCell>
                     <TableCell>{equipo.ubicacion}</TableCell>
                     <TableCell>
-                      <Badge variant={getEstadoColor(equipo.estado) as any} size="sm">
+                      <Badge variant={getEstadoColor(equipo.estado) as unknown } size="sm">
                         {equipo.estado}
                       </Badge>
                     </TableCell>

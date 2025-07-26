@@ -163,7 +163,7 @@ export default function RutasPage() {
                       <TableCell>{ruta.distancia}</TableCell>
                       <TableCell>{ruta.duracion}</TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoColor(ruta.estado) as any} size="sm">
+                        <Badge variant={getEstadoColor(ruta.estado) as unknown } size="sm">
                           {ruta.estado}
                         </Badge>
                       </TableCell>
