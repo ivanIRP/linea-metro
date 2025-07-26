@@ -1,0 +1,441 @@
+// Schema de base de datos para Sistema de Metro - CORREGIDO
+// Tipos de datos optimizados y campos alineados con la aplicación
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ========== MÓDULO DE USUARIOS Y AUTENTICACIÓN ==========
+model Usuario {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  nombre    String
+  email     String?  @unique
+  rol       RolUsuario @default(Operador)
+  activo    Boolean  @default(true)
+  ultimoAcceso DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("usuarios")
+}
+
+// ========== MÓDULO DE LÍNEAS Y ESTACIONES ==========
+model Linea {
+  id                String      @id @default(cuid())
+  nombre           String
+  longitud         Float
+  estado           EstadoLinea @default(Operativa)
+  inauguracion     String
+  pasajerosPorDia  Int         @default(0)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  // Relaciones
+  trenes           Tren[]
+  estaciones       Estacion[]
+  
+  @@map("lineas")
+}
+
+model Estacion {
+  id           String         @id @default(cuid())
+  nombre       String
+  ubicacion    String
+  lineaId      String
+  orden        Int
+  tipo         TipoEstacion   @default(Intermedia)
+  activa       Boolean        @default(true)
+  pasajeros    Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  
+  // Relaciones
+  linea        Linea          @relation(fields: [lineaId], references: [id])
+  transacciones Transaccion[]
+  camarasSeguridadNew CamaraSeguridadNew[]
+  puntosAcceso PuntoAcceso[]
+  
+  @@map("estaciones")
+}
+
+// ========== MÓDULO DE TRENES ==========
+model Tren {
+  id                    String      @id @default(cuid())
+  modelo               String
+  lineaId              String
+  estado               EstadoTren  @default(EnServicio)
+  ubicacion            String
+  capacidad            Int
+  velocidadMaxima      Int
+  ultimoMantenimiento  DateTime?
+  proximoMantenimiento DateTime?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  
+  // Relaciones
+  linea                Linea              @relation(fields: [lineaId], references: [id])
+  mantenimientos       MantenimientoTren[]
+  metricas            MetricasRendimiento[]
+  
+  @@map("trenes")
+}
+
+model MantenimientoTren {
+  id          String              @id @default(cuid())
+  trenId      String
+  tipo        TipoMantenimiento
+  fecha       DateTime
+  descripcion String
+  tecnico     String
+  completado  Boolean             @default(false)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  
+  // Relaciones
+  tren        Tren                @relation(fields: [trenId], references: [id])
+  
+  @@map("mantenimientos_tren")
+}
+
+model MetricasRendimiento {
+  id          String   @id @default(cuid())
+  trenId      String
+  fecha       DateTime @default(now())
+  distancia   Float
+  horas       Float
+  eficiencia  Float
+  combustible Float?
+  createdAt   DateTime @default(now())
+  
+  // Relaciones
+  tren        Tren     @relation(fields: [trenId], references: [id])
+  
+  @@map("metricas_rendimiento")
+}
+
+// ========== MÓDULO DE VÍAS ==========
+model Via {
+  id                  String     @id @default(cuid())
+  nombre             String
+  lineaId            String?
+  tipo               TipoVia
+  longitud           Float
+  activa             Boolean    @default(true)
+  material           String
+  ultimaInspeccion   DateTime?
+  proximaInspeccion  DateTime?
+  velocidadMaxima    Int
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  
+  // Relaciones
+  sensores           SensorVia[]
+  
+  @@map("vias")
+}
+
+model SensorVia {
+  id        String      @id @default(cuid())
+  viaId     String
+  nombre    String
+  ubicacion String
+  tipo      TipoSensor
+  valor     String
+  activo    Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
+  // Relaciones
+  via       Via         @relation(fields: [viaId], references: [id])
+  
+  @@map("sensores_via")
+}
+
+// ========== MÓDULO DE ELECTRICIDAD ==========
+model SubestacionElectrica {
+  id          String            @id @default(cuid())
+  nombre      String
+  ubicacion   String
+  voltaje     String
+  potencia    String
+  activa      Boolean           @default(true)
+  carga       Float             @default(0)
+  temperatura Float             @default(25)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  
+  // Relaciones
+  equipos     EquipoElectrico[]
+  consumos    ConsumoEnergia[]
+  
+  @@map("subestaciones_electricas")
+}
+
+model EquipoElectrico {
+  id            String            @id @default(cuid())
+  subestacionId String
+  nombre        String
+  tipo          TipoEquipo
+  activo        Boolean           @default(true)
+  temperatura   Float             @default(25)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  // Relaciones
+  subestacion   SubestacionElectrica @relation(fields: [subestacionId], references: [id])
+  
+  @@map("equipos_electricos")
+}
+
+model ConsumoEnergia {
+  id            String      @id @default(cuid())
+  subestacionId String?
+  linea         String
+  potencia      String
+  voltaje       String
+  corriente     String
+  factorPotencia Float
+  fecha         DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+  
+  // Relaciones
+  subestacion   SubestacionElectrica? @relation(fields: [subestacionId], references: [id])
+  
+  @@map("consumo_energia")
+}
+
+// ========== MÓDULO DE SEGURIDAD (CORREGIDO) ==========
+model CamaraSeguridadNew {
+  id          String        @id @default(cuid())
+  ubicacion   String
+  estado      String        @default("Activa")
+  resolucion  String        @default("HD")
+  estacionId  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  // Relaciones
+  estacion    Estacion?     @relation(fields: [estacionId], references: [id])
+  
+  @@map("camaras_seguridad_new")
+}
+
+model PuntoAcceso {
+  id           String       @id @default(cuid())
+  nombre       String
+  ubicacion    String
+  estado       String       @default("Cerrado")
+  tipoAcceso   String       @default("Tarjeta")
+  estacionId   String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  // Relaciones
+  estacion     Estacion?    @relation(fields: [estacionId], references: [id])
+  
+  @@map("puntos_acceso")
+}
+
+model IncidenteSeguridad {
+  id             String    @id @default(cuid())
+  tipo           String
+  descripcion    String
+  ubicacion      String
+  prioridad      String    @default("Media")
+  estado         String    @default("Pendiente")
+  fechaIncidente DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  @@map("incidentes_seguridad")
+}
+
+// ========== MÓDULO DE CONTROL Y MONITOREO ==========
+model CentroCCC {
+  id          String   @id @default(cuid())
+  nombre      String
+  ubicacion   String
+  operadores  Int      @default(1)
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("centros_ccc")
+}
+
+model MonitoreoTiempoReal {
+  id            String   @id @default(cuid())
+  sistemaId     String
+  parametro     String
+  valor         String
+  unidad        String?
+  estado        String   @default("Normal")
+  timestamp     DateTime @default(now())
+  createdAt     DateTime @default(now())
+  
+  @@map("monitoreo_tiempo_real")
+}
+
+model AlertaSistema {
+  id          String   @id @default(cuid())
+  tipo        String
+  mensaje     String
+  nivel       String   @default("Info")
+  estado      String   @default("Activa")
+  origen      String
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("alertas_sistema")
+}
+
+// ========== MÓDULO DE COBRO ==========
+model Tarifa {
+  id          String      @id @default(cuid())
+  tipo        String
+  precio      Float
+  descripcion String
+  activa      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relaciones
+  transacciones Transaccion[]
+  
+  @@map("tarifas")
+}
+
+model Transaccion {
+  id               String         @id @default(cuid())
+  tarifaId         String?
+  estacionId       String?
+  monto            Float
+  metodoPago       MetodoPago     @default(TarjetaMetro)
+  exitosa          Boolean        @default(true)
+  fechaTransaccion DateTime       @default(now())
+  createdAt        DateTime       @default(now())
+  
+  // Relaciones
+  tarifa           Tarifa?        @relation(fields: [tarifaId], references: [id])
+  estacion         Estacion?      @relation(fields: [estacionId], references: [id])
+  
+  @@map("transacciones")
+}
+
+model ReporteFinanciero {
+  id          String   @id @default(cuid())
+  periodo     String
+  ingresos    Float
+  gastos      Float
+  beneficio   Float
+  fecha       DateTime @default(now())
+  createdAt   DateTime @default(now())
+  
+  @@map("reportes_financieros")
+}
+
+// ========== MÓDULO DE COMUNICACIÓN ==========
+model EquipoComunicacion {
+  id        String            @id @default(cuid())
+  nombre    String
+  ubicacion String
+  tipo      TipoEquipoComunicacion
+  activo    Boolean           @default(true)
+  señal     Float             @default(100)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  
+  @@map("equipos_comunicacion")
+}
+
+model RedComunicacion {
+  id         String   @id @default(cuid())
+  nombre     String
+  tipo       String
+  cobertura  String
+  activa     Boolean  @default(true)
+  usuarios   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@map("redes_comunicacion")
+}
+
+// ========== ENUMS SIMPLIFICADOS ==========
+enum EstadoLinea {
+  Operativa
+  Mantenimiento
+  EnConstruccion
+  Planificacion
+}
+
+enum TipoEstacion {
+  Terminal
+  Intermedia
+  Transferencia
+}
+
+enum EstadoTren {
+  EnServicio
+  Estacionado
+  Mantenimiento
+  FueraDeServicio
+}
+
+enum TipoMantenimiento {
+  Preventivo
+  Correctivo
+  Inspeccion
+  Emergencia
+}
+
+enum TipoVia {
+  Principal
+  Secundaria
+  Servicio
+  Deposito
+}
+
+enum TipoSensor {
+  Temperatura
+  Vibracion
+  Desgaste
+  Presion
+}
+
+enum TipoEquipo {
+  Transformador
+  Rectificador
+  Interruptor
+  Relay
+}
+
+enum MetodoPago {
+  TarjetaMetro
+  Contactless
+  CodigoQR
+  Efectivo
+}
+
+enum TipoEquipoComunicacion {
+  RadioBase
+  Repetidor
+  Antena
+  RadioMovil
+}
+
+enum RolUsuario {
+  Administrador
+  Supervisor
+  Operador
+  Mantenimiento
+  Seguridad
+}
