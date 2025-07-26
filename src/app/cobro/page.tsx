@@ -66,9 +66,6 @@ export default function CobroPage() {
             Gestión de tarifas, pagos y recaudación del sistema
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          💳 Nueva Tarifa
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -252,22 +249,6 @@ export default function CobroPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <h4 className="font-medium text-gray-700">Acciones Rápidas</h4>
-                <Button variant="secondary" className="w-full justify-start">
-                  💳 Procesar Reembolso
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Reporte Diario
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🔧 Mantenimiento Sistema
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  ⚙️ Configurar Tarifas
-                </Button>
-              </div>
-
               <div className="p-3 bg-gray-50 rounded-lg">
                 <h5 className="font-medium text-gray-700 mb-2">Próximas Acciones</h5>
                 <ul className="text-sm text-gray-600 space-y-1">
@@ -280,57 +261,6 @@ export default function CobroPage() {
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <h3 className="text-lg font-semibold">Crear Nueva Transacción Manual</h3>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tipo de Tarifa
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-lg">
-                <option>Tarifa Básica - $2.50</option>
-                <option>Tarifa Estudiante - $1.25</option>
-                <option>Tarifa Adulto Mayor - $1.00</option>
-                <option>Pase Mensual - $45.00</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Estación
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-lg">
-                <option>Central</option>
-                <option>Norte</option>
-                <option>Sur</option>
-                <option>Universidad</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Método de Pago
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-lg">
-                <option>Tarjeta Metro</option>
-                <option>Contactless</option>
-                <option>Código QR</option>
-                <option>Efectivo</option>
-              </select>
-            </div>
-            
-            <div className="flex items-end">
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                💳 Procesar Pago
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

@@ -5,10 +5,12 @@ export async function GET() {
   try {
     const lineas = await prisma.linea.findMany({
       include: {
-        trenes: true,
-        estacionesRel: true,
-        rutas: true,
-        vias: true,
+        estaciones: {
+          select: {
+            id: true,
+            nombre: true
+          }
+        }
       },
       orderBy: {
         createdAt: 'desc',
@@ -33,10 +35,9 @@ export async function POST(request: Request) {
       data: {
         nombre: body.nombre,
         longitud: parseFloat(body.longitud),
-        estaciones: parseInt(body.estaciones),
         estado: body.estado || 'Operativa',
         inauguracion: body.inauguracion,
-        pasajerosPorDia: parseInt(body.pasajerosPorDia),
+        pasajerosPorDia: parseInt(body.pasajerosPorDia) || 0,
       },
     })
     
