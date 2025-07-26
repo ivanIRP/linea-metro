@@ -1,52 +1,121 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@/components/ui/Table'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import Modal from '@/components/ui/Modal'
+import { Form, FormField, FormActions } from '@/components/ui/Form'
+
+interface Ruta {
+  id: string
+  nombre: string
+  origen: string
+  destino: string
+  distancia: number
+  duracion: number
+  estado: string
+  frecuencia: number
+  linea?: { nombre: string }
+}
 
 export default function RutasPage() {
-  const rutas = [
-    { 
-      id: 'R001', 
-      nombre: 'Ruta Norte-Sur', 
-      origen: 'Terminal Norte', 
-      destino: 'Terminal Sur', 
-      distancia: '24.5 km', 
-      duracion: '32 min', 
-      estado: 'Activa',
-      frecuencia: '3 min'
-    },
-    { 
-      id: 'R002', 
-      nombre: 'Ruta Este-Oeste', 
-      origen: 'Plaza Central', 
-      destino: 'Centro Comercial', 
-      distancia: '18.2 km', 
-      duracion: '25 min', 
-      estado: 'Activa',
-      frecuencia: '5 min'
-    },
-    { 
-      id: 'R003', 
-      nombre: 'Ruta Circular', 
-      origen: 'Terminal Central', 
-      destino: 'Terminal Central', 
-      distancia: '32.1 km', 
-      duracion: '45 min', 
-      estado: 'Mantenimiento',
-      frecuencia: '8 min'
-    },
-    { 
-      id: 'R004', 
-      nombre: 'Ruta Express Centro', 
-      origen: 'Aeropuerto', 
-      destino: 'Centro Histórico', 
-      distancia: '15.8 km', 
-      duracion: '18 min', 
-      estado: 'En Planificación',
-      frecuencia: '10 min'
+  const [rutas, setRutas] = useState<Ruta[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [editingRuta, setEditingRuta] = useState<Ruta | null>(null)
+  const [filter, setFilter] = useState('')
+  
+  const [rutaForm, setRutaForm] = useState({
+    nombre: '',
+    origen: '',
+    destino: '',
+    distancia: '',
+    duracion: '',
+    frecuencia: '',
+    estado: 'Activa'
+  })
+
+  useEffect(() => {
+    fetchRutas()
+  }, [])
+
+  const fetchRutas = async () => {
+    try {
+      const response = await fetch('/api/rutas')
+      if (response.ok) {
+        const data = await response.json()
+        setRutas(data)
+      }
+    } catch (error) {
+      console.error('Error fetching rutas:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const url = editingRuta ? `/api/rutas/${editingRuta.id}` : '/api/rutas'
+      const method = editingRuta ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...rutaForm,
+          distancia: parseFloat(rutaForm.distancia),
+          duracion: parseInt(rutaForm.duracion),
+          frecuencia: parseInt(rutaForm.frecuencia)
+        })
+      })
+
+      if (response.ok) {
+        fetchRutas()
+        setShowModal(false)
+        resetForm()
+      }
+    } catch (error) {
+      console.error('Error saving ruta:', error)
+    }
+  }
+
+  const handleEdit = (ruta: Ruta) => {
+    setEditingRuta(ruta)
+    setRutaForm({
+      nombre: ruta.nombre,
+      origen: ruta.origen,
+      destino: ruta.destino,
+      distancia: ruta.distancia.toString(),
+      duracion: ruta.duracion.toString(),
+      frecuencia: ruta.frecuencia.toString(),
+      estado: ruta.estado
+    })
+    setShowModal(true)
+  }
+
+  const resetForm = () => {
+    setRutaForm({
+      nombre: '',
+      origen: '',
+      destino: '',
+      distancia: '',
+      duracion: '',
+      frecuencia: '',
+      estado: 'Activa'
+    })
+    setEditingRuta(null)
+  }
+
+  const filteredRutas = rutas.filter(ruta => 
+    !filter || 
+    ruta.nombre.toLowerCase().includes(filter.toLowerCase()) ||
+    ruta.origen.toLowerCase().includes(filter.toLowerCase()) ||
+    ruta.destino.toLowerCase().includes(filter.toLowerCase())
+  )
 
   const nuevaRuta = {
     estaciones: [
@@ -128,8 +197,22 @@ export default function RutasPage() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Rutas Existentes</h3>
                 <div className="flex space-x-2">
-                  <Input placeholder="Buscar rutas..." className="w-64" />
-                  <Button variant="secondary" size="sm">Filtrar</Button>
+                  <Input 
+                    placeholder="🔍 Buscar rutas..." 
+                    className="w-64"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                  />
+                  <Button 
+                    variant="primary" 
+                    size="sm"
+                    onClick={() => {
+                      resetForm()
+                      setShowModal(true)
+                    }}
+                  >
+                    ➕ Agregar Ruta
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -147,7 +230,13 @@ export default function RutasPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rutas.map((ruta) => (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8">
+                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto"></div>
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredRutas.map((ruta) => (
                     <TableRow key={ruta.id}>
                       <TableCell className="font-medium">{ruta.id}</TableCell>
                       <TableCell>{ruta.nombre}</TableCell>
@@ -157,8 +246,8 @@ export default function RutasPage() {
                           <p className="text-gray-500">↓ {ruta.destino}</p>
                         </div>
                       </TableCell>
-                      <TableCell>{ruta.distancia}</TableCell>
-                      <TableCell>{ruta.duracion}</TableCell>
+                      <TableCell>{ruta.distancia} km</TableCell>
+                      <TableCell>{ruta.duracion} min</TableCell>
                       <TableCell>
                         <Badge variant={getEstadoColor(ruta.estado) as any} size="sm">
                           {ruta.estado}
@@ -166,8 +255,14 @@ export default function RutasPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm" className="text-orange-600">Ver</Button>
-                          <Button variant="ghost" size="sm" className="text-orange-600">Editar</Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-orange-600"
+                            onClick={() => handleEdit(ruta)}
+                          >
+                            ✏️ Editar
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -181,41 +276,26 @@ export default function RutasPage() {
         <div>
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-semibold">Crear Nueva Ruta</h3>
+              <h3 className="text-lg font-semibold">Estadísticas</h3>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre de la Ruta
-                  </label>
-                  <Input placeholder="Ej: Ruta Centro-Aeropuerto" />
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-orange-600">{rutas.length}</p>
+                  <p className="text-sm text-gray-600">Total de Rutas</p>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Estación de Origen
-                  </label>
-                  <Input placeholder="Seleccionar estación..." />
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">
+                    {rutas.filter(r => r.estado === 'Activa').length}
+                  </p>
+                  <p className="text-sm text-gray-600">Rutas Activas</p>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Estación de Destino
-                  </label>
-                  <Input placeholder="Seleccionar estación..." />
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">
+                    {rutas.reduce((sum, r) => sum + r.distancia, 0).toFixed(1)} km
+                  </p>
+                  <p className="text-sm text-gray-600">Distancia Total</p>
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Frecuencia (minutos)
-                  </label>
-                  <Input type="number" placeholder="5" />
-                </div>
-                
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                  🗺️ Crear Ruta
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -283,6 +363,109 @@ export default function RutasPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal para Crear/Editar Ruta */}
+      <Modal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false)
+          resetForm()
+        }}
+        title={editingRuta ? 'Editar Ruta' : 'Crear Nueva Ruta'}
+      >
+        <Form onSubmit={handleSave}>
+          <FormField label="Nombre de la Ruta" required>
+            <Input
+              value={rutaForm.nombre}
+              onChange={(e) => setRutaForm({...rutaForm, nombre: e.target.value})}
+              placeholder="Ej: Ruta Centro-Aeropuerto"
+              required
+            />
+          </FormField>
+
+          <FormField label="Estación de Origen" required>
+            <Input
+              value={rutaForm.origen}
+              onChange={(e) => setRutaForm({...rutaForm, origen: e.target.value})}
+              placeholder="Terminal Norte"
+              required
+            />
+          </FormField>
+
+          <FormField label="Estación de Destino" required>
+            <Input
+              value={rutaForm.destino}
+              onChange={(e) => setRutaForm({...rutaForm, destino: e.target.value})}
+              placeholder="Terminal Sur"
+              required
+            />
+          </FormField>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Distancia (km)" required>
+              <Input
+                type="number"
+                step="0.1"
+                value={rutaForm.distancia}
+                onChange={(e) => setRutaForm({...rutaForm, distancia: e.target.value})}
+                placeholder="24.5"
+                required
+              />
+            </FormField>
+
+            <FormField label="Duración (min)" required>
+              <Input
+                type="number"
+                value={rutaForm.duracion}
+                onChange={(e) => setRutaForm({...rutaForm, duracion: e.target.value})}
+                placeholder="32"
+                required
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Frecuencia (min)" required>
+              <Input
+                type="number"
+                value={rutaForm.frecuencia}
+                onChange={(e) => setRutaForm({...rutaForm, frecuencia: e.target.value})}
+                placeholder="5"
+                required
+              />
+            </FormField>
+
+            <FormField label="Estado" required>
+              <select 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                value={rutaForm.estado}
+                onChange={(e) => setRutaForm({...rutaForm, estado: e.target.value})}
+              >
+                <option value="Activa">Activa</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="En Planificación">En Planificación</option>
+                <option value="Suspendida">Suspendida</option>
+              </select>
+            </FormField>
+          </div>
+
+          <FormActions>
+            <Button 
+              type="button" 
+              variant="secondary" 
+              onClick={() => {
+                setShowModal(false)
+                resetForm()
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" variant="primary">
+              {editingRuta ? '💾 Actualizar' : '🗺️ Crear Ruta'}
+            </Button>
+          </FormActions>
+        </Form>
+      </Modal>
     </div>
   )
 }
