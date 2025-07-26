@@ -4,9 +4,8 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     const camaras = await prisma.camaraSeguridadNew.findMany({
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     })
-    
     return NextResponse.json(camaras)
   } catch (error) {
     console.error('Error fetching cameras:', error)
@@ -28,8 +27,8 @@ export async function POST(request: NextRequest) {
         ubicacion,
         estado: estado || 'Activa',
         resolucion: resolucion || 'HD',
-        estacionId: estacionId || null
-      }
+        estacionId: estacionId || null,
+      },
     })
 
     return NextResponse.json(camara, { status: 201 })

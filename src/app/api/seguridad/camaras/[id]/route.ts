@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+type Context = {
+  params: {
+    id: string
+  }
+}
+
+export async function PUT(request: NextRequest, context: Context) {
+  const { id } = context.params
+
   try {
     const body = await request.json()
     const { ubicacion, estado, resolucion, estacionId } = body
@@ -11,31 +19,33 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     const camara = await prisma.camaraSeguridadNew.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ubicacion,
         estado,
         resolucion,
-        estacionId: estacionId || null
-      }
+        estacionId: estacionId || null,
+      },
     })
 
     return NextResponse.json(camara)
   } catch (error) {
-    console.error('Error updating camera:', error)
+    console.error('Error al actualizar la cámara:', error)
     return NextResponse.json({ error: 'Error al actualizar la cámara' }, { status: 500 })
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: Context) {
+  const { id } = context.params
+
   try {
     await prisma.camaraSeguridadNew.delete({
-      where: { id: params.id }
+      where: { id },
     })
 
     return NextResponse.json({ message: 'Cámara eliminada correctamente' })
   } catch (error) {
-    console.error('Error deleting camera:', error)
+    console.error('Error al eliminar la cámara:', error)
     return NextResponse.json({ error: 'Error al eliminar la cámara' }, { status: 500 })
   }
 }
