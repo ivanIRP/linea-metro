@@ -40,9 +40,6 @@ export default function PersonalPage() {
             Control y administración del personal del sistema metro
           </p>
         </div>
-        <Button variant="primary">
-          + Nuevo Empleado
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

@@ -94,9 +94,6 @@ export default function LineasPage() {
             Administración y control de líneas de metro del sistema
           </p>
         </div>
-        <Button variant="primary">
-          + Nueva Línea
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

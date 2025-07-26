@@ -338,9 +338,6 @@ export default function SeguridadPage() {
             Monitoreo de seguridad y control de accesos del sistema
           </p>
         </div>
-        <Button variant="primary" className="bg-red-600 hover:bg-red-700">
-          🚨 Activar Emergencia
-        </Button>
       </div>
 
       {/* Stats Cards */}

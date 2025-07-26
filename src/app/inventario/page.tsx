@@ -32,9 +32,6 @@ export default function InventarioPage() {
             Gestión de materiales y equipos para líneas de metro
           </p>
         </div>
-        <Button variant="primary">
-          + Agregar Item
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

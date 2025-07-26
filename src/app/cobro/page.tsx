@@ -66,9 +66,6 @@ export default function CobroPage() {
             Gestión de tarifas, pagos y recaudación del sistema
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          💳 Nueva Tarifa
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

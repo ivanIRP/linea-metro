@@ -59,10 +59,6 @@ export default function ConfiguracionPage() {
             Ajustes y parámetros generales del sistema de gestión
           </p>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="secondary">Restaurar Configuración</Button>
-          <Button variant="primary">Guardar Cambios</Button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -92,9 +92,6 @@ export default function TrenesPage() {
             Control y administración de la flota de trenes del sistema
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          🚊 Agregar Tren
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

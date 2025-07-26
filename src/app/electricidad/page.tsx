@@ -108,9 +108,6 @@ export default function ElectricidadPage() {
             Control y monitoreo del sistema de alimentación eléctrica
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          ⚡ Estado General
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

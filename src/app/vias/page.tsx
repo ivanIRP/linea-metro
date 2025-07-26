@@ -120,9 +120,6 @@ export default function ViasPage() {
             Control y mantenimiento de la infraestructura ferroviaria
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          🛤️ Inspeccionar Vías
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

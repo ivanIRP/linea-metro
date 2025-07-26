@@ -93,9 +93,6 @@ export default function ComunicacionPage() {
             Control de comunicaciones y difusión del sistema de metro
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          📢 Mensaje Urgente
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

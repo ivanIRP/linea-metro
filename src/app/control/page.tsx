@@ -85,9 +85,6 @@ export default function ControlPage() {
             Centro de control operacional del sistema de metro
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          📡 Vista General
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
