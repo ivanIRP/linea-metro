@@ -5,25 +5,32 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   try {
     const body = await request.json()
 
-    const ruta = await prisma.ruta.update({
+    const linea = await prisma.linea.update({
       where: { id: params.id },
       data: {
         nombre: body.nombre,
-        origen: body.origen,
-        destino: body.destino,
-        distancia: parseFloat(body.distancia),
-        duracion: parseInt(body.duracion),
-        frecuencia: parseInt(body.frecuencia),
-        estado: body.estado
+        longitud: parseFloat(body.distancia),
+        estado: body.estado === 'Activa' ? 'Operativa' : 'Mantenimiento'
       },
       include: {
-        linea: {
-          select: {
-            nombre: true,
-          },
+        estaciones: {
+          orderBy: { orden: 'asc' }
         },
       },
     })
+
+    // Transform back to ruta format
+    const ruta = {
+      id: linea.id,
+      nombre: linea.nombre,
+      origen: body.origen,
+      destino: body.destino,
+      distancia: linea.longitud,
+      duracion: parseInt(body.duracion),
+      frecuencia: parseInt(body.frecuencia),
+      estado: body.estado,
+      linea: { nombre: linea.nombre }
+    }
 
     return NextResponse.json(ruta)
   } catch (error) {
@@ -34,7 +41,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    await prisma.ruta.delete({
+    await prisma.linea.delete({
       where: { id: params.id }
     })
 

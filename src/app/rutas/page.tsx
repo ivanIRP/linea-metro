@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Modal from '@/components/ui/Modal'
 import { Form, FormField, FormActions } from '@/components/ui/Form'
+import { MdAdd, MdEdit, MdSearch, MdMap } from 'react-icons/md'
 
 interface Ruta {
   id: string
@@ -197,12 +198,15 @@ export default function RutasPage() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Rutas Existentes</h3>
                 <div className="flex space-x-2">
-                  <Input 
-                    placeholder="🔍 Buscar rutas..." 
-                    className="w-64"
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                  />
+                  <div className="relative">
+                    <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input 
+                      placeholder="Buscar rutas..." 
+                      className="w-64 pl-10"
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                    />
+                  </div>
                   <Button 
                     variant="primary" 
                     size="sm"
@@ -210,8 +214,10 @@ export default function RutasPage() {
                       resetForm()
                       setShowModal(true)
                     }}
+                    className="flex items-center space-x-2"
                   >
-                    ➕ Agregar Ruta
+                    <MdAdd className="w-4 h-4" />
+                    <span>Agregar Ruta</span>
                   </Button>
                 </div>
               </div>
@@ -258,10 +264,11 @@ export default function RutasPage() {
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="text-orange-600"
+                            className="text-orange-600 flex items-center space-x-1"
                             onClick={() => handleEdit(ruta)}
                           >
-                            ✏️ Editar
+                            <MdEdit className="w-4 h-4" />
+                            <span>Editar</span>
                           </Button>
                         </div>
                       </TableCell>
@@ -438,8 +445,18 @@ export default function RutasPage() {
             >
               Cancelar
             </Button>
-            <Button type="submit" variant="primary">
-              {editingRuta ? '💾 Actualizar' : '🗺️ Crear Ruta'}
+            <Button type="submit" variant="primary" className="flex items-center space-x-2">
+              {editingRuta ? (
+                <>
+                  <MdEdit className="w-4 h-4" />
+                  <span>Actualizar</span>
+                </>
+              ) : (
+                <>
+                  <MdAdd className="w-4 h-4" />
+                  <span>Crear Ruta</span>
+                </>
+              )}
             </Button>
           </FormActions>
         </Form>
