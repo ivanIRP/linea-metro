@@ -1,15 +1,116 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@/components/ui/Table'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
+import { MdTrain, MdSettings, MdAnnouncement, MdNotifications, MdAnalytics, MdRoute } from 'react-icons/md'
+
+interface Tren {
+  id: string
+  modelo: string
+  estado: string
+  ubicacion: string
+  capacidad: number
+  velocidadMaxima: number
+  linea: { nombre: string }
+  metricas: Array<{ velocidadPromedio: number; pasajerosTransportados: number }>
+}
+
+interface AlertaControl {
+  id: string
+  tipo: string
+  mensaje: string
+  prioridad: string
+  fechaCreacion: string
+  resuelta: boolean
+}
 
 export default function ControlPage() {
-  const trenesTodas = [
-    { id: 'TR-001', linea: 'L1', ubicacion: 'Est. Central → Norte', velocidad: '65 km/h', pasajeros: '180/300', estado: 'En Ruta' },
-    { id: 'TR-002', linea: 'L2', ubicacion: 'Terminal Norte', velocidad: '0 km/h', pasajeros: '45/280', estado: 'Estacionado' },
-    { id: 'TR-003', linea: 'L1', ubicacion: 'Taller', velocidad: '0 km/h', pasajeros: '0/250', estado: 'Mantenimiento' },
-    { id: 'TR-004', linea: 'L3', ubicacion: 'Est. Sur → Centro', velocidad: '70 km/h', pasajeros: '220/300', estado: 'En Ruta' }
-  ]
+  const [trenes, setTrenes] = useState<Tren[]>([])
+  const [alertas, setAlertas] = useState<AlertaControl[]>([])
+  const [loading, setLoading] = useState(true)
+  const [alertMessage, setAlertMessage] = useState('')
+
+  useEffect(() => {
+    fetchTrenes()
+    fetchAlertas()
+  }, [])
+
+  const fetchTrenes = async () => {
+    try {
+      const response = await fetch('/api/trenes')
+      if (response.ok) {
+        const data = await response.json()
+        setTrenes(data)
+      }
+    } catch (error) {
+      console.error('Error fetching trenes:', error)
+    }
+  }
+
+  const fetchAlertas = async () => {
+    try {
+      const response = await fetch('/api/control/alertas')
+      if (response.ok) {
+        const data = await response.json()
+        setAlertas(data)
+      }
+    } catch (error) {
+      console.error('Error fetching alertas:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleControlAction = async (action: string, trenId?: string) => {
+    try {
+      let endpoint = '/api/control/'
+      let body: any = { action }
+      
+      if (trenId) {
+        body.trenId = trenId
+      }
+      
+      if (action === 'anuncio' && alertMessage) {
+        body.mensaje = alertMessage
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+
+      if (response.ok) {
+        setAlertMessage('')
+        fetchAlertas() // Refresh alerts
+        alert(`Acción "${action}" ejecutada exitosamente`)
+      }
+    } catch (error) {
+      console.error('Error executing control action:', error)
+      alert('Error al ejecutar la acción')
+    }
+  }
+
+  const resolverIncidente = async (alertaId: string) => {
+    try {
+      const response = await fetch(`/api/control/alertas/${alertaId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resuelta: true })
+      })
+
+      if (response.ok) {
+        fetchAlertas()
+        alert('Incidente resuelto exitosamente')
+      }
+    } catch (error) {
+      console.error('Error resolving incident:', error)
+      alert('Error al resolver el incidente')
+    }
+  }
 
   const estaciones = [
     { nombre: 'Terminal Norte', linea: 'L1', pasajeros: '145', estado: 'Normal', proximoTren: '2 min' },

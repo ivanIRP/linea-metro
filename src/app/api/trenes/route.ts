@@ -12,7 +12,7 @@ export async function GET() {
           },
           take: 3,
         },
-        rendimiento: {
+        metricas: {
           orderBy: {
             fecha: 'desc',
           },

@@ -1,34 +1,123 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@/components/ui/Table'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import Modal from '@/components/ui/Modal'
+import { Form, FormField, FormActions } from '@/components/ui/Form'
+import { MdAdd, MdEdit, MdSearch, MdPerson } from 'react-icons/md'
+
+interface Usuario {
+  id: string
+  username: string
+  nombre: string
+  email?: string
+  rol: string
+  activo: boolean
+  createdAt?: string
+}
 
 export default function PersonalPage() {
-  const employees = [
-    { id: 'EMP-001', nombre: 'Carlos Rodríguez', puesto: 'Ingeniero de Vías', departamento: 'Infraestructura', antiguedad: '5 años', estado: 'Activo' },
-    { id: 'EMP-002', nombre: 'María González', puesto: 'Supervisora de Operaciones', departamento: 'Operaciones', antiguedad: '8 años', estado: 'Activo' },
-    { id: 'EMP-003', nombre: 'Juan Pérez', puesto: 'Técnico de Mantenimiento', departamento: 'Mantenimiento', antiguedad: '3 años', estado: 'Vacaciones' },
-    { id: 'EMP-004', nombre: 'Ana Martínez', puesto: 'Coordinadora de Seguridad', departamento: 'Seguridad', antiguedad: '6 años', estado: 'Activo' },
-    { id: 'EMP-005', nombre: 'Luis Hernández', puesto: 'Operador de Control', departamento: 'Control Central', antiguedad: '2 años', estado: 'Activo' },
-    { id: 'EMP-006', nombre: 'Carmen López', puesto: 'Especialista en Sistemas', departamento: 'Tecnología', antiguedad: '4 años', estado: 'Licencia' }
-  ]
+  const [usuarios, setUsuarios] = useState<Usuario[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [editingUsuario, setEditingUsuario] = useState<Usuario | null>(null)
+  const [filter, setFilter] = useState('')
+  
+  const [usuarioForm, setUsuarioForm] = useState({
+    username: '',
+    nombre: '',
+    email: '',
+    rol: 'Operador',
+    activo: true,
+    password: ''
+  })
 
-  const departments = [
-    { name: 'Infraestructura', count: 45, color: 'bg-blue-500' },
-    { name: 'Operaciones', count: 89, color: 'bg-green-500' },
-    { name: 'Mantenimiento', count: 67, color: 'bg-yellow-500' },
-    { name: 'Seguridad', count: 34, color: 'bg-red-500' },
-    { name: 'Tecnología', count: 23, color: 'bg-purple-500' }
-  ]
+  useEffect(() => {
+    fetchUsuarios()
+  }, [])
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Activo': return 'success'
-      case 'Vacaciones': return 'warning'
-      case 'Licencia': return 'info'
-      default: return 'default'
+  const fetchUsuarios = async () => {
+    try {
+      const response = await fetch('/api/personal')
+      if (response.ok) {
+        const data = await response.json()
+        setUsuarios(data)
+      }
+    } catch (error) {
+      console.error('Error fetching usuarios:', error)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const url = editingUsuario ? `/api/personal/${editingUsuario.id}` : '/api/personal'
+      const method = editingUsuario ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(usuarioForm)
+      })
+
+      if (response.ok) {
+        fetchUsuarios()
+        setShowModal(false)
+        resetForm()
+      }
+    } catch (error) {
+      console.error('Error saving usuario:', error)
+    }
+  }
+
+  const handleEdit = (usuario: Usuario) => {
+    setEditingUsuario(usuario)
+    setUsuarioForm({
+      username: usuario.username,
+      nombre: usuario.nombre,
+      email: usuario.email || '',
+      rol: usuario.rol,
+      activo: usuario.activo,
+      password: ''
+    })
+    setShowModal(true)
+  }
+
+  const resetForm = () => {
+    setUsuarioForm({
+      username: '',
+      nombre: '',
+      email: '',
+      rol: 'Operador',
+      activo: true,
+      password: ''
+    })
+    setEditingUsuario(null)
+  }
+
+  const filteredUsuarios = usuarios.filter(usuario => 
+    !filter || 
+    usuario.nombre.toLowerCase().includes(filter.toLowerCase()) ||
+    usuario.username.toLowerCase().includes(filter.toLowerCase()) ||
+    usuario.rol.toLowerCase().includes(filter.toLowerCase())
+  )
+
+  const roleStats = [
+    { name: 'Administrador', count: usuarios.filter(u => u.rol === 'Administrador').length, color: 'bg-red-500' },
+    { name: 'Operador', count: usuarios.filter(u => u.rol === 'Operador').length, color: 'bg-blue-500' },
+    { name: 'Seguridad', count: usuarios.filter(u => u.rol === 'Seguridad').length, color: 'bg-yellow-500' },
+    { name: 'Mantenimiento', count: usuarios.filter(u => u.rol === 'Mantenimiento').length, color: 'bg-green-500' },
+    { name: 'Supervisor', count: usuarios.filter(u => u.rol === 'Supervisor').length, color: 'bg-purple-500' }
+  ]
+
+  const getStatusColor = (activo: boolean) => {
+    return activo ? 'success' : 'error'
   }
 
   return (
@@ -46,15 +135,15 @@ export default function PersonalPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">1,245</p>
-              <p className="text-sm text-gray-600">Total Empleados</p>
+              <p className="text-2xl font-bold text-blue-600">{usuarios.length}</p>
+              <p className="text-sm text-gray-600">Total Usuarios</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">1,189</p>
+              <p className="text-2xl font-bold text-green-600">{usuarios.filter(u => u.activo).length}</p>
               <p className="text-sm text-gray-600">Activos</p>
             </div>
           </CardContent>
@@ -62,16 +151,16 @@ export default function PersonalPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-yellow-600">34</p>
-              <p className="text-sm text-gray-600">En Vacaciones</p>
+              <p className="text-2xl font-bold text-red-600">{usuarios.filter(u => !u.activo).length}</p>
+              <p className="text-sm text-gray-600">Inactivos</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600">22</p>
-              <p className="text-sm text-gray-600">En Licencia</p>
+              <p className="text-2xl font-bold text-purple-600">{usuarios.filter(u => u.rol === 'Administrador').length}</p>
+              <p className="text-sm text-gray-600">Administradores</p>
             </div>
           </CardContent>
         </Card>
@@ -84,8 +173,27 @@ export default function PersonalPage() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Lista de Personal</h3>
                 <div className="flex space-x-2">
-                  <Input placeholder="Buscar empleados..." className="w-64" />
-                  <Button variant="secondary" size="sm">Filtrar</Button>
+                  <div className="relative">
+                    <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input 
+                      placeholder="Buscar usuarios..." 
+                      className="w-64 pl-10"
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                    />
+                  </div>
+                  <Button 
+                    variant="primary" 
+                    size="sm"
+                    onClick={() => {
+                      resetForm()
+                      setShowModal(true)
+                    }}
+                    className="flex items-center space-x-2"
+                  >
+                    <MdAdd className="w-4 h-4" />
+                    <span>Agregar Usuario</span>
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -93,32 +201,43 @@ export default function PersonalPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHeaderCell>ID</TableHeaderCell>
+                    <TableHeaderCell>Usuario</TableHeaderCell>
                     <TableHeaderCell>Nombre</TableHeaderCell>
-                    <TableHeaderCell>Puesto</TableHeaderCell>
-                    <TableHeaderCell>Departamento</TableHeaderCell>
-                    <TableHeaderCell>Antigüedad</TableHeaderCell>
+                    <TableHeaderCell>Email</TableHeaderCell>
+                    <TableHeaderCell>Rol</TableHeaderCell>
                     <TableHeaderCell>Estado</TableHeaderCell>
                     <TableHeaderCell>Acciones</TableHeaderCell>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {employees.map((employee) => (
-                    <TableRow key={employee.id}>
-                      <TableCell className="font-medium">{employee.id}</TableCell>
-                      <TableCell>{employee.nombre}</TableCell>
-                      <TableCell>{employee.puesto}</TableCell>
-                      <TableCell>{employee.departamento}</TableCell>
-                      <TableCell>{employee.antiguedad}</TableCell>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8">
+                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto"></div>
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredUsuarios.map((usuario) => (
+                    <TableRow key={usuario.id}>
+                      <TableCell className="font-medium">{usuario.username}</TableCell>
+                      <TableCell>{usuario.nombre}</TableCell>
+                      <TableCell>{usuario.email || 'N/A'}</TableCell>
+                      <TableCell>{usuario.rol}</TableCell>
                       <TableCell>
-                        <Badge variant={getStatusColor(employee.estado) as any} size="sm">
-                          {employee.estado}
+                        <Badge variant={getStatusColor(usuario.activo) as any} size="sm">
+                          {usuario.activo ? 'Activo' : 'Inactivo'}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">Editar</Button>
-                          <Button variant="ghost" size="sm">Ver</Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-orange-600 flex items-center space-x-1"
+                            onClick={() => handleEdit(usuario)}
+                          >
+                            <MdEdit className="w-4 h-4" />
+                            <span>Editar</span>
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -132,17 +251,17 @@ export default function PersonalPage() {
         <div>
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-semibold">Personal por Departamento</h3>
+              <h3 className="text-lg font-semibold">Usuarios por Rol</h3>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {departments.map((dept, index) => (
+                {roleStats.map((role, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${dept.color}`}></div>
-                      <span className="text-sm font-medium">{dept.name}</span>
+                      <div className={`w-3 h-3 rounded-full ${role.color}`}></div>
+                      <span className="text-sm font-medium">{role.name}</span>
                     </div>
-                    <span className="text-sm font-bold">{dept.count}</span>
+                    <span className="text-sm font-bold">{role.count}</span>
                   </div>
                 ))}
               </div>
@@ -150,6 +269,106 @@ export default function PersonalPage() {
           </Card>
         </div>
       </div>
+
+      {/* Modal for CRUD operations */}
+      {showModal && (
+        <Modal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false)
+            resetForm()
+          }}
+          title={editingUsuario ? 'Editar Usuario' : 'Agregar Usuario'}
+        >
+          <Form onSubmit={handleSave} className="space-y-4">
+            <FormField label="Nombre de Usuario">
+              <Input
+                value={usuarioForm.username}
+                onChange={(e) => setUsuarioForm({...usuarioForm, username: e.target.value})}
+                placeholder="Ingrese el nombre de usuario"
+                required
+                disabled={!!editingUsuario}
+              />
+            </FormField>
+
+            <FormField label="Nombre Completo">
+              <Input
+                value={usuarioForm.nombre}
+                onChange={(e) => setUsuarioForm({...usuarioForm, nombre: e.target.value})}
+                placeholder="Ingrese el nombre completo"
+                required
+              />
+            </FormField>
+
+            <FormField label="Email">
+              <Input
+                type="email"
+                value={usuarioForm.email}
+                onChange={(e) => setUsuarioForm({...usuarioForm, email: e.target.value})}
+                placeholder="Ingrese el email"
+              />
+            </FormField>
+
+            {!editingUsuario && (
+              <FormField label="Contraseña">
+                <Input
+                  type="password"
+                  value={usuarioForm.password}
+                  onChange={(e) => setUsuarioForm({...usuarioForm, password: e.target.value})}
+                  placeholder="Ingrese la contraseña"
+                  required={!editingUsuario}
+                />
+              </FormField>
+            )}
+
+            <FormField label="Rol">
+              <select
+                value={usuarioForm.rol}
+                onChange={(e) => setUsuarioForm({...usuarioForm, rol: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                required
+              >
+                <option value="Administrador">Administrador</option>
+                <option value="Operador">Operador</option>
+                <option value="Seguridad">Seguridad</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Supervisor">Supervisor</option>
+              </select>
+            </FormField>
+
+            <FormField label="Estado">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="activo"
+                  checked={usuarioForm.activo}
+                  onChange={(e) => setUsuarioForm({...usuarioForm, activo: e.target.checked})}
+                  className="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500"
+                />
+                <label htmlFor="activo" className="text-sm font-medium text-gray-700">
+                  Usuario activo
+                </label>
+              </div>
+            </FormField>
+
+            <FormActions>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setShowModal(false)
+                  resetForm()
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" variant="primary">
+                {editingUsuario ? 'Actualizar' : 'Crear'} Usuario
+              </Button>
+            </FormActions>
+          </Form>
+        </Modal>
+      )}
     </div>
   )
 }

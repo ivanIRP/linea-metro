@@ -17,13 +17,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         proximaInspeccion: body.proximaInspeccion ? new Date(body.proximaInspeccion) : null,
         velocidadMaxima: parseInt(body.velocidadMaxima),
       },
-      include: {
-        linea: {
-          select: {
-            nombre: true,
-          },
-        },
-      },
     })
 
     return NextResponse.json(via)

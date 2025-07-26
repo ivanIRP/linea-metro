@@ -4,13 +4,6 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     const vias = await prisma.via.findMany({
-      include: {
-        linea: {
-          select: {
-            nombre: true,
-          },
-        },
-      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -41,13 +34,6 @@ export async function POST(request: NextRequest) {
         ultimaInspeccion: body.ultimaInspeccion ? new Date(body.ultimaInspeccion) : null,
         proximaInspeccion: body.proximaInspeccion ? new Date(body.proximaInspeccion) : null,
         velocidadMaxima: parseInt(body.velocidadMaxima),
-      },
-      include: {
-        linea: {
-          select: {
-            nombre: true,
-          },
-        },
       },
     })
     
