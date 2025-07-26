@@ -31,9 +31,6 @@ export default function InventarioPage() {
   const [equipoForm, setEquipoForm] = useState({
     nombre: '',
     tipo: 'Transformador',
-    marca: '',
-    modelo: '',
-    fechaInstalacion: '',
     activo: true
   })
 
@@ -82,9 +79,6 @@ export default function InventarioPage() {
     setEquipoForm({
       nombre: equipo.nombre,
       tipo: equipo.tipo,
-      marca: equipo.marca,
-      modelo: equipo.modelo,
-      fechaInstalacion: equipo.fechaInstalacion || '',
       activo: equipo.activo
     })
     setShowModal(true)
@@ -94,9 +88,6 @@ export default function InventarioPage() {
     setEquipoForm({
       nombre: '',
       tipo: 'Transformador',
-      marca: '',
-      modelo: '',
-      fechaInstalacion: '',
       activo: true
     })
     setEditingEquipo(null)
@@ -105,7 +96,6 @@ export default function InventarioPage() {
   const filteredEquipos = equipos.filter(equipo => 
     !filter || 
     equipo.nombre.toLowerCase().includes(filter.toLowerCase()) ||
-    equipo.marca.toLowerCase().includes(filter.toLowerCase()) ||
     equipo.tipo.toLowerCase().includes(filter.toLowerCase())
   )
 
@@ -194,9 +184,7 @@ export default function InventarioPage() {
               <TableRow>
                 <TableHeaderCell>Nombre</TableHeaderCell>
                 <TableHeaderCell>Tipo</TableHeaderCell>
-                <TableHeaderCell>Marca</TableHeaderCell>
-                <TableHeaderCell>Modelo</TableHeaderCell>
-                <TableHeaderCell>Instalación</TableHeaderCell>
+                <TableHeaderCell>Subestación</TableHeaderCell>
                 <TableHeaderCell>Estado</TableHeaderCell>
                 <TableHeaderCell>Acciones</TableHeaderCell>
               </TableRow>
@@ -204,7 +192,7 @@ export default function InventarioPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={5} className="text-center py-8">
                     <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto"></div>
                   </TableCell>
                 </TableRow>
@@ -212,11 +200,7 @@ export default function InventarioPage() {
                 <TableRow key={equipo.id}>
                   <TableCell className="font-medium">{equipo.nombre}</TableCell>
                   <TableCell>{equipo.tipo}</TableCell>
-                  <TableCell>{equipo.marca}</TableCell>
-                  <TableCell>{equipo.modelo}</TableCell>
-                  <TableCell>
-                    {equipo.fechaInstalacion ? new Date(equipo.fechaInstalacion).toLocaleDateString() : 'N/A'}
-                  </TableCell>
+                  <TableCell>{equipo.subestacion?.nombre || 'N/A'}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusColor(equipo.activo) as any} size="sm">
                       {equipo.activo ? 'Activo' : 'Inactivo'}
@@ -279,30 +263,6 @@ export default function InventarioPage() {
               </select>
             </FormField>
 
-            <FormField label="Marca">
-              <Input
-                value={equipoForm.marca}
-                onChange={(e) => setEquipoForm({...equipoForm, marca: e.target.value})}
-                placeholder="Ingrese la marca"
-                required
-              />
-            </FormField>
-
-            <FormField label="Modelo">
-              <Input
-                value={equipoForm.modelo}
-                onChange={(e) => setEquipoForm({...equipoForm, modelo: e.target.value})}
-                placeholder="Ingrese el modelo"
-              />
-            </FormField>
-
-            <FormField label="Fecha de Instalación">
-              <Input
-                type="date"
-                value={equipoForm.fechaInstalacion}
-                onChange={(e) => setEquipoForm({...equipoForm, fechaInstalacion: e.target.value})}
-              />
-            </FormField>
 
             <FormField label="Estado">
               <div className="flex items-center space-x-2">

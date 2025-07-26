@@ -10,9 +10,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       data: {
         nombre: body.nombre,
         tipo: body.tipo,
-        marca: body.marca,
-        modelo: body.modelo,
-        fechaInstalacion: body.fechaInstalacion ? new Date(body.fechaInstalacion) : null,
         activo: body.activo,
       },
       include: {

@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
           data: {
             nombre: 'Subestación Principal',
             ubicacion: 'Central',
-            voltaje: 220,
+            voltaje: '220V',
+            potencia: '1000kW',
             activa: true
           }
         })
@@ -54,9 +55,6 @@ export async function POST(request: NextRequest) {
         nombre: body.nombre,
         subestacionId: subestacionId,
         tipo: body.tipo || 'Transformador',
-        marca: body.marca,
-        modelo: body.modelo || '',
-        fechaInstalacion: body.fechaInstalacion ? new Date(body.fechaInstalacion) : new Date(),
         activo: body.activo !== undefined ? body.activo : true,
       },
       include: {
