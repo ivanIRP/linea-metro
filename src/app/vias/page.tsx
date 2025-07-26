@@ -319,28 +319,6 @@ export default function ViasPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  🔍 Inspección General
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🔧 Programar Mantenimiento
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Reporte de Desgaste
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  ⚠️ Alertas de Sensores
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

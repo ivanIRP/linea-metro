@@ -211,28 +211,6 @@ export default function LineasPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  🗺️ Ver Mapa General
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Reportes de Tráfico
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🚧 Planificar Mantenimiento
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  💰 Análisis Financiero
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

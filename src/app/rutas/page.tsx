@@ -299,28 +299,6 @@ export default function RutasPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  🗺️ Mapa de Rutas
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  ⏱️ Optimizar Tiempos
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Análisis de Tráfico
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🚧 Rutas Alternativas
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

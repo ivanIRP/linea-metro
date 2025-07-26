@@ -199,28 +199,6 @@ export default function ComunicacionPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  📢 Anuncio General
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🚨 Alerta de Emergencia
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📱 Mensaje a Conductores
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📺 Actualizar Pantallas
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 

@@ -148,28 +148,6 @@ export default function PersonalPage() {
               </div>
             </CardContent>
           </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Generar Reporte
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📅 Gestionar Horarios
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  💰 Nómina del Mes
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🎓 Programas de Capacitación
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

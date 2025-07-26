@@ -249,22 +249,6 @@ export default function CobroPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <h4 className="font-medium text-gray-700">Acciones Rápidas</h4>
-                <Button variant="secondary" className="w-full justify-start">
-                  💳 Procesar Reembolso
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Reporte Diario
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🔧 Mantenimiento Sistema
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  ⚙️ Configurar Tarifas
-                </Button>
-              </div>
-
               <div className="p-3 bg-gray-50 rounded-lg">
                 <h5 className="font-medium text-gray-700 mb-2">Próximas Acciones</h5>
                 <ul className="text-sm text-gray-600 space-y-1">
