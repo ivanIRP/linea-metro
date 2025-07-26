@@ -21,24 +21,6 @@ export default function ConfiguracionPage() {
         { label: 'Intervalo entre Trenes (min)', value: '3', type: 'number' },
         { label: 'Capacidad Máxima por Vagón', value: '200', type: 'number' }
       ]
-    },
-    {
-      title: 'Configuración de Seguridad',
-      items: [
-        { label: 'Tiempo de Sesión (min)', value: '120', type: 'number' },
-        { label: 'Intentos de Login Máximos', value: '3', type: 'number' },
-        { label: 'Autenticación de Dos Factores', value: 'Activado', type: 'toggle' },
-        { label: 'Logs de Auditoría', value: 'Activado', type: 'toggle' }
-      ]
-    },
-    {
-      title: 'Notificaciones',
-      items: [
-        { label: 'Alertas de Mantenimiento', value: 'Activado', type: 'toggle' },
-        { label: 'Notificaciones de Emergencia', value: 'Activado', type: 'toggle' },
-        { label: 'Reportes Automáticos', value: 'Semanal', type: 'select' },
-        { label: 'Email de Administrador', value: 'admin@metro.com', type: 'email' }
-      ]
     }
   ]
 

@@ -307,23 +307,6 @@ export default function ControlPage() {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="font-medium text-gray-700">Acciones de Emergencia</h4>
-              <div className="space-y-2">
-                <Button className="w-full bg-red-500 hover:bg-red-600 text-white">
-                  🚨 Parada de Emergencia
-                </Button>
-                <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white">
-                  ⚠️ Evacuación Parcial
-                </Button>
-                <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                  🚇 Servicio Limitado
-                </Button>
-                <Button variant="secondary" className="w-full">
-                  📋 Protocolo Emergencia
-                </Button>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

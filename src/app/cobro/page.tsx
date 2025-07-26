@@ -261,57 +261,6 @@ export default function CobroPage() {
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <h3 className="text-lg font-semibold">Crear Nueva Transacción Manual</h3>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tipo de Tarifa
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-lg">
-                <option>Tarifa Básica - $2.50</option>
-                <option>Tarifa Estudiante - $1.25</option>
-                <option>Tarifa Adulto Mayor - $1.00</option>
-                <option>Pase Mensual - $45.00</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Estación
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-lg">
-                <option>Central</option>
-                <option>Norte</option>
-                <option>Sur</option>
-                <option>Universidad</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Método de Pago
-              </label>
-              <select className="w-full p-2 border border-gray-300 rounded-lg">
-                <option>Tarjeta Metro</option>
-                <option>Contactless</option>
-                <option>Código QR</option>
-                <option>Efectivo</option>
-              </select>
-            </div>
-            
-            <div className="flex items-end">
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                💳 Procesar Pago
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

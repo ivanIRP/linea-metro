@@ -309,46 +309,6 @@ export default function RutasPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <h3 className="text-lg font-semibold">Planificador de Ruta - Vista Previa</h3>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium text-gray-900">Ruta en Construcción: Norte-Sur Express</h4>
-              <Badge variant="info" size="sm">En Planificación</Badge>
-            </div>
-            
-            <div className="flex items-center space-x-4 overflow-x-auto pb-4">
-              {nuevaRuta.estaciones.map((estacion, index) => (
-                <div key={estacion.orden} className="flex items-center space-x-2 min-w-max">
-                  <div className={`px-3 py-2 rounded-lg text-sm font-medium ${getTipoColor(estacion.tipo)}`}>
-                    {estacion.orden}. {estacion.nombre}
-                  </div>
-                  {index < nuevaRuta.estaciones.length - 1 && (
-                    <div className="text-gray-400">→</div>
-                  )}
-                </div>
-              ))}
-            </div>
-            
-            <div className="flex justify-between items-center pt-4 border-t">
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">Distancia estimada:</span> 24.5 km | 
-                <span className="font-medium"> Tiempo estimado:</span> 32 min
-              </div>
-              <div className="space-x-2">
-                <Button variant="secondary" size="sm">Editar</Button>
-                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white">
-                  Guardar Ruta
-                </Button>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Modal para Crear/Editar Ruta */}
       <Modal
         isOpen={showModal}
