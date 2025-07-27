@@ -33,7 +33,7 @@ async function testDatabase() {
         _count: {
           select: {
             trenes: true,
-            estacionesRel: true,
+            estaciones: true,
           }
         }
       }
@@ -41,7 +41,7 @@ async function testDatabase() {
     
     console.log('\n📋 Líneas configuradas:')
     lineasConDetalles.forEach(linea => {
-      console.log(`   • ${linea.nombre} - ${linea.estado} (${linea._count.trenes} trenes, ${linea._count.estacionesRel} estaciones)`)
+      console.log(`   • ${linea.nombre} - ${linea.estado} (${linea._count.trenes} trenes, ${linea._count.estaciones} estaciones)`)
     })
     
     console.log('\n🎉 ¡Todos los tests pasaron! La base de datos está funcionando correctamente.')

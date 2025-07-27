@@ -1,80 +1,67 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@/components/ui/Table'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
+import { MdSearch, MdFilterList, MdVisibility, MdEdit } from 'react-icons/md'
+
+interface Linea {
+  id: string
+  nombre: string
+  longitud: number
+  estado: string
+  inauguracion: string
+  pasajerosPorDia: number
+  estaciones: Array<{ nombre: string }>
+}
 
 export default function LineasPage() {
-  const metroLines = [
-    { 
-      id: 'L001', 
-      nombre: 'Línea 1 - Central', 
-      longitud: '24.5 km', 
-      estaciones: 18, 
-      estado: 'Operativa', 
-      inauguracion: '2015',
-      pasajeros: '125,000/día'
-    },
-    { 
-      id: 'L002', 
-      nombre: 'Línea 2 - Norte', 
-      longitud: '18.2 km', 
-      estaciones: 14, 
-      estado: 'Operativa', 
-      inauguracion: '2018',
-      pasajeros: '98,500/día'
-    },
-    { 
-      id: 'L003', 
-      nombre: 'Línea 3 - Sur', 
-      longitud: '22.8 km', 
-      estaciones: 16, 
-      estado: 'Mantenimiento', 
-      inauguracion: '2020',
-      pasajeros: '110,200/día'
-    },
-    { 
-      id: 'L004', 
-      nombre: 'Línea 4 - Este', 
-      longitud: '15.6 km', 
-      estaciones: 12, 
-      estado: 'En Construcción', 
-      inauguracion: '2025 (Est.)',
-      pasajeros: 'N/A'
-    },
-    { 
-      id: 'L005', 
-      nombre: 'Línea 5 - Oeste', 
-      longitud: '19.3 km', 
-      estaciones: 15, 
-      estado: 'Planificación', 
-      inauguracion: '2027 (Est.)',
-      pasajeros: 'N/A'
-    },
-    { 
-      id: 'L006', 
-      nombre: 'Línea 6 - Circular', 
-      longitud: '32.1 km', 
-      estaciones: 24, 
-      estado: 'Planificación', 
-      inauguracion: '2030 (Est.)',
-      pasajeros: 'N/A'
+  const [lineas, setLineas] = useState<Linea[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState('')
+  
+  useEffect(() => {
+    fetchLineas()
+  }, [])
+
+  const fetchLineas = async () => {
+    try {
+      const response = await fetch('/api/lineas')
+      if (response.ok) {
+        const data = await response.json()
+        setLineas(data)
+      }
+    } catch (error) {
+      console.error('Error fetching lineas:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const filteredLineas = lineas.filter(linea => 
+    !filter || 
+    linea.nombre.toLowerCase().includes(filter.toLowerCase()) ||
+    linea.estado.toLowerCase().includes(filter.toLowerCase())
+  )
 
   const projects = [
-    { nombre: 'Extensión Línea 2', progreso: 75, presupuesto: '$450M', fechaFin: 'Dic 2024' },
-    { nombre: 'Nueva Línea 4', progreso: 45, presupuesto: '$680M', fechaFin: 'Jun 2025' },
-    { nombre: 'Modernización L1', progreso: 90, presupuesto: '$120M', fechaFin: 'Mar 2024' },
-    { nombre: 'Estación Central L6', progreso: 15, presupuesto: '$890M', fechaFin: 'Dic 2030' }
+    { nombre: 'Extensión Línea 12', progreso: 75, presupuesto: '$8,500M MXN', fechaFin: 'Dic 2024' },
+    { nombre: 'Nueva Línea Dorada', progreso: 45, presupuesto: '$12,800M MXN', fechaFin: 'Jun 2025' },
+    { nombre: 'Modernización L1 Rosa', progreso: 90, presupuesto: '$2,300M MXN', fechaFin: 'Mar 2024' },
+    { nombre: 'Ampliación L6 Ferrería', progreso: 15, presupuesto: '$16,700M MXN', fechaFin: 'Dic 2030' }
   ]
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Operativa': return 'success'
       case 'Mantenimiento': return 'warning'
-      case 'En Construcción': return 'info'
-      case 'Planificación': return 'default'
+      case 'En Construcción':
+      case 'EnConstruccion': return 'info'
+      case 'Planificación':
+      case 'Planificacion': return 'default'
       default: return 'default'
     }
   }
@@ -89,21 +76,18 @@ export default function LineasPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Líneas Metro</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Metro Ciudad de México - Líneas</h1>
           <p className="text-gray-600 mt-2">
-            Administración y control de líneas de metro del sistema
+            Sistema de Transporte Colectivo - Gestión de líneas y proyectos
           </p>
         </div>
-        <Button variant="primary">
-          + Nueva Línea
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">6</p>
+              <p className="text-2xl font-bold text-blue-600">{lineas.length}</p>
               <p className="text-sm text-gray-600">Líneas Totales</p>
             </div>
           </CardContent>
@@ -111,7 +95,7 @@ export default function LineasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">2</p>
+              <p className="text-2xl font-bold text-green-600">{lineas.filter(l => l.estado === 'Operativa').length}</p>
               <p className="text-sm text-gray-600">Operativas</p>
             </div>
           </CardContent>
@@ -119,7 +103,7 @@ export default function LineasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-yellow-600">2</p>
+              <p className="text-2xl font-bold text-yellow-600">{lineas.filter(l => l.estado === 'En Construcción' || l.estado === 'EnConstruccion').length}</p>
               <p className="text-sm text-gray-600">En Construcción</p>
             </div>
           </CardContent>
@@ -127,7 +111,9 @@ export default function LineasPage() {
         <Card>
           <CardContent className="p-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-purple-600">99</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {lineas.reduce((total, linea) => total + (linea.estaciones?.length || 0), 0)}
+              </p>
               <p className="text-sm text-gray-600">Estaciones</p>
             </div>
           </CardContent>
@@ -141,8 +127,19 @@ export default function LineasPage() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Líneas de Metro</h3>
                 <div className="flex space-x-2">
-                  <Input placeholder="Buscar líneas..." className="w-64" />
-                  <Button variant="secondary" size="sm">Filtrar</Button>
+                  <div className="relative">
+                    <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input 
+                      placeholder="Buscar líneas..." 
+                      className="w-64 pl-10"
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                    />
+                  </div>
+                  <Button variant="secondary" size="sm" className="flex items-center space-x-1">
+                    <MdFilterList className="w-4 h-4" />
+                    <span>Filtrar</span>
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -156,28 +153,27 @@ export default function LineasPage() {
                     <TableHeaderCell>Estaciones</TableHeaderCell>
                     <TableHeaderCell>Estado</TableHeaderCell>
                     <TableHeaderCell>Pasajeros/día</TableHeaderCell>
-                    <TableHeaderCell>Acciones</TableHeaderCell>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {metroLines.map((line) => (
-                    <TableRow key={line.id}>
-                      <TableCell className="font-medium">{line.id}</TableCell>
-                      <TableCell>{line.nombre}</TableCell>
-                      <TableCell>{line.longitud}</TableCell>
-                      <TableCell>{line.estaciones}</TableCell>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8">
+                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto"></div>
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredLineas.map((linea) => (
+                    <TableRow key={linea.id}>
+                      <TableCell className="font-medium">{linea.id}</TableCell>
+                      <TableCell>{linea.nombre}</TableCell>
+                      <TableCell>{linea.longitud} km</TableCell>
+                      <TableCell>{linea.estaciones?.length || 0}</TableCell>
                       <TableCell>
-                        <Badge variant={getStatusColor(line.estado) as unknown } size="sm">
-                          {line.estado}
+                        <Badge variant={getStatusColor(linea.estado) as any} size="sm">
+                          {linea.estado}
                         </Badge>
                       </TableCell>
-                      <TableCell>{line.pasajeros}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">Ver</Button>
-                          <Button variant="ghost" size="sm">Editar</Button>
-                        </div>
-                      </TableCell>
+                      <TableCell>{linea.pasajerosPorDia.toLocaleString()}/día</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -211,28 +207,6 @@ export default function LineasPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  🗺️ Ver Mapa General
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Reportes de Tráfico
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🚧 Planificar Mantenimiento
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  💰 Análisis Financiero
-                </Button>
               </div>
             </CardContent>
           </Card>
