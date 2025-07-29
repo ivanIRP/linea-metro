@@ -1,59 +1,116 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@/components/ui/Table'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
+import Modal from '@/components/ui/Modal'
+import { Form, FormField, FormActions } from '@/components/ui/Form'
+
+interface Via {
+  id: string
+  nombre: string
+  tipo: string
+  longitud: number
+  activa: boolean
+  material: string
+  ultimaInspeccion?: string
+  proximaInspeccion?: string
+  velocidadMaxima: number
+  linea?: { nombre: string }
+}
 
 export default function ViasPage() {
-  const vias = [
-    { 
-      id: 'V-001', 
-      nombre: 'Vía Principal Norte', 
-      linea: 'Línea 1', 
-      tipo: 'Principal',
-      longitud: '12.5 km', 
-      estado: 'Operativa', 
-      material: 'Acero Inoxidable',
-      ultimaInspeccion: '10/02/2024',
-      proximaInspeccion: '10/05/2024',
-      velocidadMaxima: '80 km/h'
-    },
-    { 
-      id: 'V-002', 
-      nombre: 'Vía Secundaria Norte', 
-      linea: 'Línea 1', 
-      tipo: 'Secundaria',
-      longitud: '12.5 km', 
-      estado: 'Operativa', 
-      material: 'Acero Inoxidable',
-      ultimaInspeccion: '08/02/2024',
-      proximaInspeccion: '08/05/2024',
-      velocidadMaxima: '80 km/h'
-    },
-    { 
-      id: 'V-003', 
-      nombre: 'Vía Principal Sur', 
-      linea: 'Línea 2', 
-      tipo: 'Principal',
-      longitud: '9.2 km', 
-      estado: 'Mantenimiento', 
-      material: 'Acero Carbono',
-      ultimaInspeccion: '15/01/2024',
-      proximaInspeccion: '15/04/2024',
-      velocidadMaxima: '75 km/h'
-    },
-    { 
-      id: 'V-004', 
-      nombre: 'Vía de Depósito', 
-      linea: 'Servicios', 
-      tipo: 'Servicio',
-      longitud: '2.8 km', 
-      estado: 'Operativa', 
-      material: 'Acero Estándar',
-      ultimaInspeccion: '20/02/2024',
-      proximaInspeccion: '20/08/2024',
-      velocidadMaxima: '25 km/h'
+  const [vias, setVias] = useState<Via[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [editingVia, setEditingVia] = useState<Via | null>(null)
+  
+  const [viaForm, setViaForm] = useState({
+    nombre: '',
+    tipo: 'Principal',
+    longitud: '',
+    activa: true,
+    material: '',
+    ultimaInspeccion: '',
+    proximaInspeccion: '',
+    velocidadMaxima: ''
+  })
+
+  useEffect(() => {
+    fetchVias()
+  }, [])
+
+  const fetchVias = async () => {
+    try {
+      const response = await fetch('/api/vias')
+      if (response.ok) {
+        const data = await response.json()
+        setVias(data)
+      }
+    } catch (error) {
+      console.error('Error fetching vias:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const url = editingVia ? `/api/vias/${editingVia.id}` : '/api/vias'
+      const method = editingVia ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...viaForm,
+          longitud: parseFloat(viaForm.longitud),
+          velocidadMaxima: parseInt(viaForm.velocidadMaxima)
+        })
+      })
+
+      if (response.ok) {
+        fetchVias()
+        setShowModal(false)
+        resetForm()
+      }
+    } catch (error) {
+      console.error('Error saving via:', error)
+    }
+  }
+
+  const handleEdit = (via: Via) => {
+    setEditingVia(via)
+    setViaForm({
+      nombre: via.nombre,
+      tipo: via.tipo,
+      longitud: via.longitud.toString(),
+      activa: via.activa,
+      material: via.material,
+      ultimaInspeccion: via.ultimaInspeccion || '',
+      proximaInspeccion: via.proximaInspeccion || '',
+      velocidadMaxima: via.velocidadMaxima.toString()
+    })
+    setShowModal(true)
+  }
+
+  const resetForm = () => {
+    setViaForm({
+      nombre: '',
+      tipo: 'Principal',
+      longitud: '',
+      activa: true,
+      material: '',
+      ultimaInspeccion: '',
+      proximaInspeccion: '',
+      velocidadMaxima: ''
+    })
+    setEditingVia(null)
+  }
 
   const secciones = [
     { seccion: 'S1-Norte', km: '0.0 - 2.5', estado: 'Bueno', desgaste: '15%' },
@@ -76,13 +133,8 @@ export default function ViasPage() {
     { id: 'SENS-004', ubicacion: 'Km 3.2 - Vía V-003', tipo: 'Temperatura', valor: '45°C', estado: 'Alerta' }
   ]
 
-  const getEstadoColor = (estado: string) => {
-    switch (estado) {
-      case 'Operativa': return 'success'
-      case 'Mantenimiento': return 'warning'
-      case 'Fuera de Servicio': return 'error'
-      default: return 'default'
-    }
+  const getEstadoColor = (activa: boolean) => {
+    return activa ? 'success' : 'error'
   }
 
   const getEstadoSeccionColor = (estado: string) => {
@@ -120,9 +172,6 @@ export default function ViasPage() {
             Control y mantenimiento de la infraestructura ferroviaria
           </p>
         </div>
-        <Button variant="primary" className="bg-orange-500 hover:bg-orange-600">
-          🛤️ Inspeccionar Vías
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -164,7 +213,19 @@ export default function ViasPage() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-semibold">Estado de Vías</h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Estado de Vías</h3>
+                <Button 
+                  variant="primary" 
+                  size="sm"
+                  onClick={() => {
+                    resetForm()
+                    setShowModal(true)
+                  }}
+                >
+                  ➕ Agregar Vía
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
               <Table>
@@ -180,11 +241,17 @@ export default function ViasPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {vias.map((via) => (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8">
+                        <div className="animate-spin w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full mx-auto"></div>
+                      </TableCell>
+                    </TableRow>
+                  ) : vias.map((via) => (
                     <TableRow key={via.id}>
                       <TableCell className="font-medium">{via.id}</TableCell>
                       <TableCell>{via.nombre}</TableCell>
-                      <TableCell>{via.linea}</TableCell>
+                      <TableCell>{via.linea?.nombre || 'Sin asignar'}</TableCell>
                       <TableCell>
                         <Badge 
                           variant={via.tipo === 'Principal' ? 'info' : 'default'} 
@@ -193,16 +260,22 @@ export default function ViasPage() {
                           {via.tipo}
                         </Badge>
                       </TableCell>
-                      <TableCell>{via.longitud}</TableCell>
+                      <TableCell>{via.longitud} km</TableCell>
                       <TableCell>
-                        <Badge variant={getEstadoColor(via.estado) as unknown } size="sm">
-                          {via.estado}
+                        <Badge variant={getEstadoColor(via.activa) as any} size="sm">
+                          {via.activa ? 'Operativa' : 'Fuera de Servicio'}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm" className="text-orange-600">Ver</Button>
-                          <Button variant="ghost" size="sm" className="text-orange-600">Inspeccionar</Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-orange-600"
+                            onClick={() => handleEdit(via)}
+                          >
+                            ✏️ Editar
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -243,28 +316,6 @@ export default function ViasPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Acciones Rápidas</h3>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Button variant="secondary" className="w-full justify-start">
-                  🔍 Inspección General
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  🔧 Programar Mantenimiento
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  📊 Reporte de Desgaste
-                </Button>
-                <Button variant="secondary" className="w-full justify-start">
-                  ⚠️ Alertas de Sensores
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -343,6 +394,133 @@ export default function ViasPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal para Crear/Editar Vía */}
+      <Modal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false)
+          resetForm()
+        }}
+        title={editingVia ? 'Editar Vía' : 'Agregar Nueva Vía'}
+      >
+        <Form onSubmit={handleSave}>
+          <FormField label="Nombre de la Vía" required>
+            <Input
+              value={viaForm.nombre}
+              onChange={(e) => setViaForm({...viaForm, nombre: e.target.value})}
+              placeholder="Vía Principal Norte"
+              required
+            />
+          </FormField>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Tipo de Vía" required>
+              <select 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                value={viaForm.tipo}
+                onChange={(e) => setViaForm({...viaForm, tipo: e.target.value})}
+              >
+                <option value="Principal">Principal</option>
+                <option value="Secundaria">Secundaria</option>
+                <option value="Servicio">Servicio</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+              </select>
+            </FormField>
+
+            <FormField label="Material" required>
+              <Input
+                value={viaForm.material}
+                onChange={(e) => setViaForm({...viaForm, material: e.target.value})}
+                placeholder="Acero Inoxidable"
+                required
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Longitud (km)" required>
+              <Input
+                type="number"
+                step="0.1"
+                value={viaForm.longitud}
+                onChange={(e) => setViaForm({...viaForm, longitud: e.target.value})}
+                placeholder="12.5"
+                required
+              />
+            </FormField>
+
+            <FormField label="Velocidad Máxima (km/h)" required>
+              <Input
+                type="number"
+                value={viaForm.velocidadMaxima}
+                onChange={(e) => setViaForm({...viaForm, velocidadMaxima: e.target.value})}
+                placeholder="80"
+                required
+              />
+            </FormField>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Última Inspección">
+              <Input
+                type="date"
+                value={viaForm.ultimaInspeccion}
+                onChange={(e) => setViaForm({...viaForm, ultimaInspeccion: e.target.value})}
+              />
+            </FormField>
+
+            <FormField label="Próxima Inspección">
+              <Input
+                type="date"
+                value={viaForm.proximaInspeccion}
+                onChange={(e) => setViaForm({...viaForm, proximaInspeccion: e.target.value})}
+              />
+            </FormField>
+          </div>
+
+          <FormField label="Estado">
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="activa"
+                  checked={viaForm.activa === true}
+                  onChange={() => setViaForm({...viaForm, activa: true})}
+                  className="mr-2"
+                />
+                Operativa
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="activa"
+                  checked={viaForm.activa === false}
+                  onChange={() => setViaForm({...viaForm, activa: false})}
+                  className="mr-2"
+                />
+                Fuera de Servicio
+              </label>
+            </div>
+          </FormField>
+
+          <FormActions>
+            <Button 
+              type="button" 
+              variant="secondary" 
+              onClick={() => {
+                setShowModal(false)
+                resetForm()
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" variant="primary">
+              {editingVia ? '💾 Actualizar' : '🛤️ Agregar Vía'}
+            </Button>
+          </FormActions>
+        </Form>
+      </Modal>
     </div>
   )
 }

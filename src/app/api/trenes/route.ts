@@ -12,7 +12,7 @@ export async function GET() {
           },
           take: 3,
         },
-        rendimiento: {
+        metricas: {
           orderBy: {
             fecha: 'desc',
           },
@@ -38,10 +38,30 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
     
+    // Get or create a default line if none exists
+    let lineaId = body.lineaId
+    if (!lineaId) {
+      const defaultLinea = await prisma.linea.findFirst()
+      if (!defaultLinea) {
+        const newLinea = await prisma.linea.create({
+          data: {
+            nombre: 'Línea Principal',
+            longitud: 10.0,
+            estado: 'Operativa',
+            inauguracion: '2024',
+            pasajerosPorDia: 0
+          }
+        })
+        lineaId = newLinea.id
+      } else {
+        lineaId = defaultLinea.id
+      }
+    }
+
     const tren = await prisma.tren.create({
       data: {
         modelo: body.modelo,
-        lineaId: body.lineaId,
+        lineaId: lineaId,
         estado: body.estado || 'EnServicio',
         ubicacion: body.ubicacion,
         capacidad: parseInt(body.capacidad),

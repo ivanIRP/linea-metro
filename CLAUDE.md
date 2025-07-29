@@ -32,6 +32,7 @@ This is a Next.js 15 application for a metro line management system ("Metro Lín
 - ESLint
 - Prisma ORM
 - MySQL Database
+- React Icons for UI elements
 
 ### Project Structure
 - `/src/app/` - App Router pages and API routes
@@ -65,22 +66,39 @@ Custom UI components follow a consistent pattern:
 ### Database Architecture
 The system uses MySQL with Prisma ORM and includes:
 - **Complete data models** for all 8 modules (Seguridad, Rutas, Trenes, Vías, Electricidad, Control, Cobro, Comunicación)
-- **User authentication system** with roles and permissions
+- **User authentication system** with roles (Administrador, Supervisor, Operador, Mantenimiento, Seguridad)
 - **Relational structure** with proper foreign keys and constraints
 - **Comprehensive enums** for status tracking and categorization
-- **REST API endpoints** for all CRUD operations
+- **REST API endpoints** for all CRUD operations following RESTful conventions
 - **Real-time data** integration with frontend
-- **Seed data** for testing and development
+- **Seed data** for testing and development using JavaScript seed files
 
 ### Authentication System
 - **Simple login system** without complex encryption
-- **Cookie-based sessions** for user management
-- **Route protection** with middleware
-- **Role-based access** (Administrador, Operador, Seguridad, etc.)
+- **Cookie-based sessions** for user management using 'metro-session' cookie
+- **Route protection** with middleware (`src/middleware.ts`)
+- **Role-based access** (Administrador, Supervisor, Operador, Mantenimiento, Seguridad)
 - **Test users** available for development:
   - admin/admin (Administrador)
   - operador/operador (Operador)
   - seguridad/seguridad (Seguridad)
+
+### Key Database Models
+- **Usuario**: User management with roles and authentication
+- **Linea/Estacion**: Metro lines and stations with operational data
+- **Tren**: Train management with maintenance tracking
+- **Via**: Track management with sensor monitoring
+- **SubestacionElectrica**: Power infrastructure monitoring
+- **CamaraSeguridadNew/PuntoAcceso**: Security systems
+- **Tarifa/Transaccion**: Payment and fare management
+- **EquipoComunicacion**: Communication infrastructure
+
+### API Structure
+All API routes follow REST conventions in `/src/app/api/`:
+- `/api/auth/*` - Authentication endpoints
+- `/api/[module]/*` - CRUD operations for each module
+- Support for GET, POST, PUT, DELETE operations
+- Consistent JSON response format
 
 ### Code Conventions
 - Spanish language for UI text and data
@@ -89,3 +107,4 @@ The system uses MySQL with Prisma ORM and includes:
 - Absolute imports using `@/` prefix
 - Consistent TypeScript typing with interfaces
 - API routes follow RESTful conventions
+- Database models use Spanish field names matching UI

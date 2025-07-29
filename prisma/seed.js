@@ -88,44 +88,93 @@ async function main() {
   })
   console.log(`✅ Creados ${usuarios.count} usuarios`)
 
-  // ========== LÍNEAS ==========
-  console.log('🚇 Creando líneas de metro...')
+  // ========== LÍNEAS DEL METRO CDMX ==========
+  console.log('🚇 Creando líneas del Metro CDMX...')
   const lineas = await prisma.linea.createMany({
     data: [
       {
-        nombre: 'Línea 1 - Roja',
-        longitud: 23.5,
+        nombre: 'Línea 1 - Rosa (Pantitlán - Observatorio)',
+        longitud: 18.7,
         estado: 'Operativa',
         inauguracion: '1969',
         pasajerosPorDia: 580000
       },
       {
-        nombre: 'Línea 2 - Azul',
-        longitud: 27.8,
+        nombre: 'Línea 2 - Azul (Cuatro Caminos - Tasqueña)',
+        longitud: 23.4,
         estado: 'Operativa',
         inauguracion: '1970',
         pasajerosPorDia: 650000
       },
       {
-        nombre: 'Línea 3 - Verde',
-        longitud: 32.1,
+        nombre: 'Línea 3 - Verde (Indios Verdes - Universidad)',
+        longitud: 23.6,
         estado: 'Operativa',
         inauguracion: '1972',
         pasajerosPorDia: 720000
       },
       {
-        nombre: 'Línea 4 - Amarilla',
-        longitud: 18.7,
-        estado: 'Mantenimiento',
-        inauguracion: '1975',
+        nombre: 'Línea 4 - Cian (Martín Carrera - Santa Anita)',
+        longitud: 10.7,
+        estado: 'Operativa',
+        inauguracion: '1982',
         pasajerosPorDia: 420000
       },
       {
-        nombre: 'Línea 5 - Naranja',
-        longitud: 15.2,
-        estado: 'EnConstruccion',
-        inauguracion: '2024',
-        pasajerosPorDia: 0
+        nombre: 'Línea 5 - Amarilla (Pantitlán - Politécnico)',
+        longitud: 13.5,
+        estado: 'Operativa',
+        inauguracion: '1982',
+        pasajerosPorDia: 380000
+      },
+      {
+        nombre: 'Línea 6 - Roja (El Rosario - Martín Carrera)',
+        longitud: 14.0,
+        estado: 'Operativa',
+        inauguracion: '1983',
+        pasajerosPorDia: 450000
+      },
+      {
+        nombre: 'Línea 7 - Naranja (El Rosario - Barranca del Muerto)',
+        longitud: 18.8,
+        estado: 'Operativa',
+        inauguracion: '1984',
+        pasajerosPorDia: 520000
+      },
+      {
+        nombre: 'Línea 8 - Verde (Garibaldi - Constitución de 1917)',
+        longitud: 20.7,
+        estado: 'Operativa',
+        inauguracion: '1994',
+        pasajerosPorDia: 480000
+      },
+      {
+        nombre: 'Línea 9 - Café (Tacubaya - Pantitlán)',
+        longitud: 15.4,
+        estado: 'Operativa',
+        inauguracion: '1987',
+        pasajerosPorDia: 410000
+      },
+      {
+        nombre: 'Línea A - Morada (Pantitlán - La Paz)',
+        longitud: 17.2,
+        estado: 'Operativa',
+        inauguracion: '1991',
+        pasajerosPorDia: 350000
+      },
+      {
+        nombre: 'Línea B - Verde/Gris (Buenavista - Ciudad Azteca)',
+        longitud: 23.7,
+        estado: 'Operativa',
+        inauguracion: '1999',
+        pasajerosPorDia: 280000
+      },
+      {
+        nombre: 'Línea 12 - Dorada (Mixcoac - Tláhuac)',
+        longitud: 24.5,
+        estado: 'Mantenimiento',
+        inauguracion: '2012',
+        pasajerosPorDia: 200000
       }
     ]
   })
@@ -138,34 +187,35 @@ async function main() {
   console.log('🚉 Creando estaciones...')
   const estacionesData = []
   
-  // Línea 1 - 6 estaciones
+  // Línea 1 Rosa - Estaciones principales
   const linea1 = lineasCreadas.find(l => l.nombre.includes('Línea 1'))
   estacionesData.push(
-    { nombre: 'Terminal Norte L1', ubicacion: 'Zona Norte', lineaId: linea1.id, orden: 1, tipo: 'Terminal', activa: true, pasajeros: 45000 },
-    { nombre: 'Centro Histórico L1', ubicacion: 'Centro', lineaId: linea1.id, orden: 2, tipo: 'Transferencia', activa: true, pasajeros: 65000 },
-    { nombre: 'Plaza Mayor L1', ubicacion: 'Centro', lineaId: linea1.id, orden: 3, tipo: 'Intermedia', activa: true, pasajeros: 38000 },
-    { nombre: 'Zona Industrial L1', ubicacion: 'Sur', lineaId: linea1.id, orden: 4, tipo: 'Intermedia', activa: true, pasajeros: 42000 },
-    { nombre: 'Universidad L1', ubicacion: 'Sur', lineaId: linea1.id, orden: 5, tipo: 'Intermedia', activa: true, pasajeros: 52000 },
-    { nombre: 'Terminal Sur L1', ubicacion: 'Zona Sur', lineaId: linea1.id, orden: 6, tipo: 'Terminal', activa: true, pasajeros: 41000 }
+    { nombre: 'Pantitlán', ubicacion: 'Iztacalco', lineaId: linea1.id, orden: 1, tipo: 'Terminal', activa: true, pasajeros: 85000 },
+    { nombre: 'Zócalo/Tenochtitlan', ubicacion: 'Centro Histórico', lineaId: linea1.id, orden: 2, tipo: 'Transferencia', activa: true, pasajeros: 125000 },
+    { nombre: 'Pino Suárez', ubicacion: 'Centro', lineaId: linea1.id, orden: 3, tipo: 'Transferencia', activa: true, pasajeros: 98000 },
+    { nombre: 'Insurgentes', ubicacion: 'Roma Norte', lineaId: linea1.id, orden: 4, tipo: 'Transferencia', activa: true, pasajeros: 75000 },
+    { nombre: 'Chapultepec', ubicacion: 'Miguel Hidalgo', lineaId: linea1.id, orden: 5, tipo: 'Intermedia', activa: true, pasajeros: 68000 },
+    { nombre: 'Observatorio', ubicacion: 'Miguel Hidalgo', lineaId: linea1.id, orden: 6, tipo: 'Terminal', activa: true, pasajeros: 72000 }
   )
 
-  // Línea 2 - 5 estaciones
+  // Línea 2 Azul - Estaciones principales
   const linea2 = lineasCreadas.find(l => l.nombre.includes('Línea 2'))
   estacionesData.push(
-    { nombre: 'Aeropuerto L2', ubicacion: 'Este', lineaId: linea2.id, orden: 1, tipo: 'Terminal', activa: true, pasajeros: 68000 },
-    { nombre: 'Centro Comercial L2', ubicacion: 'Este', lineaId: linea2.id, orden: 2, tipo: 'Intermedia', activa: true, pasajeros: 55000 },
-    { nombre: 'Plaza Central L2', ubicacion: 'Centro', lineaId: linea2.id, orden: 3, tipo: 'Transferencia', activa: true, pasajeros: 72000 },
-    { nombre: 'Parque Municipal L2', ubicacion: 'Oeste', lineaId: linea2.id, orden: 4, tipo: 'Intermedia', activa: true, pasajeros: 43000 },
-    { nombre: 'Estadio L2', ubicacion: 'Oeste', lineaId: linea2.id, orden: 5, tipo: 'Terminal', activa: true, pasajeros: 39000 }
+    { nombre: 'Cuatro Caminos', ubicacion: 'Miguel Hidalgo', lineaId: linea2.id, orden: 1, tipo: 'Terminal', activa: true, pasajeros: 68000 },
+    { nombre: 'Revolución', ubicacion: 'Miguel Hidalgo', lineaId: linea2.id, orden: 2, tipo: 'Intermedia', activa: true, pasajeros: 55000 },
+    { nombre: 'Allende', ubicacion: 'Centro Histórico', lineaId: linea2.id, orden: 3, tipo: 'Transferencia', activa: true, pasajeros: 72000 },
+    { nombre: 'Pino Suárez', ubicacion: 'Centro', lineaId: linea2.id, orden: 4, tipo: 'Transferencia', activa: true, pasajeros: 98000 },
+    { nombre: 'Tasqueña', ubicacion: 'Tlalpan', lineaId: linea2.id, orden: 5, tipo: 'Terminal', activa: true, pasajeros: 59000 }
   )
 
-  // Línea 3 - 4 estaciones adicionales
+  // Línea 3 Verde - Estaciones principales
   const linea3 = lineasCreadas.find(l => l.nombre.includes('Línea 3'))
   estacionesData.push(
-    { nombre: 'Puerto L3', ubicacion: 'Norte', lineaId: linea3.id, orden: 1, tipo: 'Terminal', activa: true, pasajeros: 48000 },
-    { nombre: 'Mercado Central L3', ubicacion: 'Norte', lineaId: linea3.id, orden: 2, tipo: 'Intermedia', activa: true, pasajeros: 56000 },
-    { nombre: 'Hospital General L3', ubicacion: 'Centro', lineaId: linea3.id, orden: 3, tipo: 'Intermedia', activa: true, pasajeros: 61000 },
-    { nombre: 'Residencial L3', ubicacion: 'Sur', lineaId: linea3.id, orden: 4, tipo: 'Terminal', activa: true, pasajeros: 37000 }
+    { nombre: 'Indios Verdes', ubicacion: 'Gustavo A. Madero', lineaId: linea3.id, orden: 1, tipo: 'Terminal', activa: true, pasajeros: 88000 },
+    { nombre: 'La Raza', ubicacion: 'Gustavo A. Madero', lineaId: linea3.id, orden: 2, tipo: 'Transferencia', activa: true, pasajeros: 76000 },
+    { nombre: 'Hidalgo', ubicacion: 'Cuauhtémoc', lineaId: linea3.id, orden: 3, tipo: 'Transferencia', activa: true, pasajeros: 91000 },
+    { nombre: 'Balderas', ubicacion: 'Cuauhtémoc', lineaId: linea3.id, orden: 4, tipo: 'Transferencia', activa: true, pasajeros: 83000 },
+    { nombre: 'Universidad', ubicacion: 'Coyoacán', lineaId: linea3.id, orden: 5, tipo: 'Terminal', activa: true, pasajeros: 67000 }
   )
 
   await prisma.estacion.createMany({ data: estacionesData })
@@ -478,14 +528,14 @@ async function main() {
   await prisma.alertaSistema.createMany({ data: alertasData })
   console.log(`✅ Creadas ${alertasData.length} alertas del sistema`)
 
-  // ========== TARIFAS ==========
-  console.log('💳 Creando tarifas...')
+  // ========== TARIFAS METRO CDMX ==========
+  console.log('💳 Creando tarifas en pesos mexicanos...')
   const tarifasData = [
-    { tipo: 'Adulto', precio: 1.50, descripcion: 'Tarifa general para adultos', activa: true },
-    { tipo: 'Estudiante', precio: 0.75, descripcion: 'Tarifa reducida para estudiantes', activa: true },
-    { tipo: 'Tercera Edad', precio: 0.50, descripcion: 'Tarifa para personas mayores', activa: true },
-    { tipo: 'Discapacitado', precio: 0.00, descripcion: 'Tarifa gratuita para personas con discapacidad', activa: true },
-    { tipo: 'Turista', precio: 2.00, descripcion: 'Tarifa para visitantes', activa: false }
+    { tipo: 'Adulto', precio: 5.00, descripcion: 'Tarifa general para adultos - Metro CDMX', activa: true },
+    { tipo: 'Estudiante', precio: 2.50, descripcion: 'Tarifa reducida para estudiantes con credencial', activa: true },
+    { tipo: 'Tercera Edad', precio: 2.00, descripcion: 'Tarifa para personas mayores de 60 años', activa: true },
+    { tipo: 'Discapacitado', precio: 2.50, descripcion: 'Tarifa para personas con discapacidad', activa: true },
+    { tipo: 'Niño', precio: 0.00, descripcion: 'Tarifa gratuita para menores de 5 años', activa: true }
   ]
 
   await prisma.tarifa.createMany({ data: tarifasData })
