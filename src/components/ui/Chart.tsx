@@ -1,7 +1,7 @@
 'use client'
 
 interface ChartProps {
-  data: any[]
+  data: unknown[]
   type: 'line' | 'bar' | 'pie' | 'area'
   title: string
   xKey?: string
