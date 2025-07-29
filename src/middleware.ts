@@ -33,6 +33,7 @@ export function middleware(request: NextRequest) {
     // Sesión válida, continuar
     return NextResponse.next()
   } catch (error) {
+    console.error(error);
     // Sesión inválida, redirigir al login
     const response = NextResponse.redirect(new URL('/login', request.url))
     response.cookies.delete('metro-session')
