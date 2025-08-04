@@ -13,7 +13,8 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "db:test": "node scripts/test-database.js",
-    "auth:test": "node scripts/test-login.js"
+    "auth:test": "node scripts/test-login.js",
+    "auth:flow": "node scripts/test-login-flow.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

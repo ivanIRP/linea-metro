@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     })
 
     // Crear sesión simple (sin JWT complejo)
-    const sessionData = {
+    const userData = {
       id: usuario.id,
       username: usuario.username,
       nombre: usuario.nombre,
@@ -59,15 +59,20 @@ export async function POST(request: Request) {
       email: usuario.email,
     }
 
+    // La estructura de la sesión debe tener el objeto user
+    const sessionData = {
+      user: userData
+    }
+
     const response = NextResponse.json(
       {
         message: 'Login exitoso',
-        user: sessionData,
+        user: userData,
       },
       { status: 200 }
     )
 
-    // Establecer cookie de sesión simple
+    // Establecer cookie de sesión con la estructura correcta
     response.cookies.set('metro-session', JSON.stringify(sessionData), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

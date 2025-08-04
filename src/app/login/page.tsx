@@ -32,9 +32,14 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (response.ok) {
-        // Login exitoso, redirigir al dashboard
-        router.push('/')
-        router.refresh()
+        // Login exitoso, mostrar mensaje de éxito y redirigir
+        console.log('Login successful, redirecting...')
+        setError('')
+        
+        // Usar window.location para forzar recarga completa y verificación de auth
+        setTimeout(() => {
+          window.location.href = '/dashboard'
+        }, 500)
       } else {
         setError(data.error || 'Error al iniciar sesión')
       }

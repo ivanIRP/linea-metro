@@ -1,14 +1,13 @@
-// Schema de base de datos para Sistema de Metro - CORREGIDO
-// Tipos de datos optimizados y campos alineados con la aplicación
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 
 // ========== MÓDULO DE USUARIOS Y AUTENTICACIÓN ==========
 model Usuario {

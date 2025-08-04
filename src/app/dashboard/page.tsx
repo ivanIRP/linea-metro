@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Chart from '@/components/ui/Chart'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/lib/auth'
+import { useRouter } from 'next/navigation'
 
 interface DashboardStats {
   general: {
@@ -59,11 +61,20 @@ interface ChartData {
 }
 
 export default function Dashboard() {
+  const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [chartData, setChartData] = useState<ChartData | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState('')
   const [lastUpdate, setLastUpdate] = useState('')
+
+  // Additional authentication check at component level
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login')
+    }
+  }, [user, authLoading, router])
 
   useEffect(() => {
     // Update time every second
@@ -110,15 +121,23 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
-  if (loading) {
+  // Show loading for authentication or data loading
+  if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando dashboard...</p>
+          <p className="text-gray-600">
+            {authLoading ? 'Verifying access...' : 'Loading dashboard...'}
+          </p>
         </div>
       </div>
     )
+  }
+
+  // If no authenticated user, don't show content
+  if (!user) {
+    return null
   }
 
   if (!stats) {

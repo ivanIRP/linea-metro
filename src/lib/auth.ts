@@ -20,11 +20,16 @@ export function useAuth() {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me')
+      setLoading(true)
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include' // Ensure cookies are included
+      })
       if (response.ok) {
         const data = await response.json()
+        console.log('Auth check successful:', data.user?.nombre)
         setUser(data.user)
       } else {
+        console.log('Auth check failed:', response.status)
         setUser(null)
       }
     } catch (error) {
