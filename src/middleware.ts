@@ -4,37 +4,67 @@ export function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get('metro-session')
   const { pathname } = request.nextUrl
 
-  // Rutas públicas que no requieren autenticación
-  const publicRoutes = ['/login', '/']
+  // Public routes that don't require authentication
+  const publicRoutes = ['/login']
   
-  // Redireccionar la raíz al dashboard si está autenticado
-  if (pathname === '/' && sessionCookie) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+  // Handle root route
+  if (pathname === '/') {
+    if (sessionCookie) {
+      try {
+        JSON.parse(sessionCookie.value)
+        // Valid session, redirect to dashboard
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      } catch (error) {
+        console.error('Invalid session:', error)
+        // Invalid session, clear cookie and redirect to login
+        const response = NextResponse.redirect(new URL('/login', request.url))
+        response.cookies.delete('metro-session')
+        return response
+      }
+    } else {
+      // No session, redirect to login
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
   }
   
-  // Si es una ruta pública, permitir el acceso
+  // Handle public routes
   if (publicRoutes.includes(pathname)) {
-    // Si ya está autenticado y trata de ir al login, redirigir al dashboard
-    if (sessionCookie && pathname === '/login') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    // If already authenticated and trying to go to login, redirect to dashboard
+    if (sessionCookie) {
+      try {
+        JSON.parse(sessionCookie.value)
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      } catch (error) {
+        console.error('Invalid session on login:', error)
+        // Invalid session, clear cookie and allow access to login
+        const response = NextResponse.next()
+        response.cookies.delete('metro-session')
+        return response
+      }
     }
     return NextResponse.next()
   }
 
-  // Para todas las demás rutas, verificar autenticación
+  // For all other routes, verify authentication
   if (!sessionCookie) {
-    // No hay sesión, redirigir al login
+    // No session, redirect to login
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Verificar que la sesión sea válida
+  // Verify that the session is valid
   try {
-    JSON.parse(sessionCookie.value)
-    // Sesión válida, continuar
+    const sessionData = JSON.parse(sessionCookie.value)
+    
+    // Additional validation - check if session has required fields
+    if (!sessionData.user || !sessionData.user.id || !sessionData.user.username) {
+      throw new Error('Invalid session structure')
+    }
+    
+    // Valid session, continue
     return NextResponse.next()
   } catch (error) {
-    console.error(error);
-    // Sesión inválida, redirigir al login
+    console.error('Invalid session on protected route:', error);
+    // Invalid session, redirect to login
     const response = NextResponse.redirect(new URL('/login', request.url))
     response.cookies.delete('metro-session')
     return response

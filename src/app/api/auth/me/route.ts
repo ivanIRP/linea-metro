@@ -14,8 +14,16 @@ export async function GET(request: NextRequest) {
     try {
       const sessionData = JSON.parse(sessionCookie.value)
       
+      // Verificar que la sesión tenga la estructura correcta
+      if (!sessionData.user || !sessionData.user.id || !sessionData.user.username) {
+        return NextResponse.json(
+          { error: 'Estructura de sesión inválida' },
+          { status: 401 }
+        )
+      }
+      
       return NextResponse.json({
-        user: sessionData,
+        user: sessionData.user,
       })
     } catch (parseError) {
       return NextResponse.json(

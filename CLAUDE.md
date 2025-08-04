@@ -74,10 +74,17 @@ The system uses MySQL with Prisma ORM and includes:
 - **Seed data** for testing and development using JavaScript seed files
 
 ### Authentication System
-- **Simple login system** without complex encryption
+- **Comprehensive authentication flow** with proper security measures
 - **Cookie-based sessions** for user management using 'metro-session' cookie
-- **Route protection** with middleware (`src/middleware.ts`)
+- **Multi-layer route protection**:
+  - Server-side middleware (`src/middleware.ts`) with session validation
+  - Client-side route guards in `LayoutWrapper.tsx`
+  - Component-level authentication checks
+  - Additional `AuthGuard` component for sensitive pages
+- **Loading states** during authentication verification to prevent unauthorized access
 - **Role-based access** (Administrador, Supervisor, Operador, Mantenimiento, Seguridad)
+- **Automatic redirects**: Unauthenticated users → login, Authenticated users → dashboard
+- **Session validation** with automatic cleanup of invalid sessions
 - **Test users** available for development:
   - admin/admin (Administrador)
   - operador/operador (Operador)

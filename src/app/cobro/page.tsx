@@ -88,10 +88,6 @@ export default function CobroPage() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">Transacciones Recientes</h3>
-                <div className="flex space-x-2">
-                  <Input placeholder="Buscar transacción..." className="w-48" />
-                  <Button variant="secondary" size="sm">Filtrar</Button>
-                </div>
               </div>
             </CardHeader>
             <CardContent className="p-0">
